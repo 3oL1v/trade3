@@ -409,3 +409,47 @@ export interface StrategyResearchStatus {
   approved_for_calls: boolean;
   note: string;
 }
+
+export type DecisionAction = "accept" | "reject" | "defer";
+export type DecisionDirection = "long" | "short" | "none";
+
+export interface ManualDecisionRequest {
+  symbol: string;
+  action: DecisionAction;
+  direction?: DecisionDirection;
+  ai_verdict?: string | null;
+  ai_conviction?: string | null;
+  snapshot_generated_at?: string | null;
+  note?: string | null;
+  analysis_snapshot?: unknown;
+  ai_review?: unknown;
+}
+
+export interface ManualDecision {
+  id: number;
+  symbol: string;
+  action: DecisionAction;
+  direction: DecisionDirection;
+  ai_verdict: string | null;
+  ai_conviction: string | null;
+  agreed_with_ai: boolean | null;
+  snapshot_generated_at: string | null;
+  recorded_at: string;
+  note: string | null;
+  analysis_snapshot: Record<string, unknown> | null;
+  ai_review: Record<string, unknown> | null;
+}
+
+export interface ManualDecisionStats {
+  total: number;
+  accepted: number;
+  rejected: number;
+  deferred: number;
+  longs: number;
+  shorts: number;
+  accept_rate: number | null;
+  ai_comparable: number;
+  agreed_with_ai: number;
+  agreement_rate: number | null;
+  note: string;
+}

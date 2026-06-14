@@ -5,6 +5,9 @@ import type {
   JournalSignal,
   JournalStats,
   LiveEngineStatus,
+  ManualDecision,
+  ManualDecisionRequest,
+  ManualDecisionStats,
   MarketAnalysisSnapshot,
   MarketFlowSnapshot,
   MarketUniverse,
@@ -49,4 +52,13 @@ export const api = {
     request<{ signals: JournalSignal[] }>(`/v1/journal/signals?limit=${limit}`),
   journalStats: () => request<JournalStats>("/v1/journal/stats"),
   researchStatus: () => request<StrategyResearchStatus>("/v1/research/status"),
+  recordDecision: (input: ManualDecisionRequest) =>
+    request<ManualDecision>("/v1/decisions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    }),
+  decisions: (limit = 100) =>
+    request<{ decisions: ManualDecision[] }>(`/v1/decisions?limit=${limit}`),
+  decisionStats: () => request<ManualDecisionStats>("/v1/decisions/stats"),
 };

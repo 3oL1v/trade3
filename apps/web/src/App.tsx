@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   BookOpen,
+  ClipboardList,
   Clock3,
   Database,
   RefreshCw,
@@ -10,7 +11,9 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { AiReviewPanel } from "./AiReviewPanel";
 import { api } from "./api";
+import { DecisionActions } from "./DecisionActions";
 import { Analysis, BottomDesk } from "./DecisionDesk";
+import { DecisionJournalDrawer } from "./DecisionJournalDrawer";
 import { ageSeconds, compactUsd, moscowTime, signed } from "./format";
 import { JournalDrawer } from "./JournalDrawer";
 import { PriceChart } from "./PriceChart";
@@ -19,6 +22,7 @@ import type {
   Candle,
   JournalStats,
   LiveEngineStatus,
+  ManualDecisionStats,
   Market,
   MarketAnalysisSnapshot,
   MarketFlowSnapshot,
@@ -57,6 +61,14 @@ export function App() {
   const [detailedChart, setDetailedChart] = useState(false);
   const [journalStats, setJournalStats] = useState<JournalStats | null>(null);
   const [journalOpen, setJournalOpen] = useState(false);
+  const [decisionStats, setDecisionStats] = useState<ManualDecisionStats | null>(null);
+  const [decisionOpen, setDecisionOpen] = useState(false);
+
+  const refreshDecisionStats = useCallback(() => {
+    const pending = api.decisionStats?.();
+    if (!pending) return;
+    void pending.then(setDecisionStats).catch(() => setDecisionStats(null));
+  }, []);
 
   const refresh = useCallback(async () => {
     try {
@@ -81,10 +93,11 @@ export function App() {
         setJournalStats(null);
         setJournalOpen(false);
       }
+      refreshDecisionStats();
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "API недоступен");
     }
-  }, []);
+  }, [refreshDecisionStats]);
 
   useEffect(() => {
     void refresh();
@@ -190,7 +203,9 @@ export function App() {
         live={isLive}
         now={now}
         journalCount={journalStats?.total_signals ?? null}
+        decisionCount={decisionStats?.total ?? null}
         onJournalOpen={() => setJournalOpen(true)}
+        onDecisionOpen={() => setDecisionOpen(true)}
         onRefresh={refresh}
       />
       <div className="research-warning" role="status">
@@ -260,12 +275,19 @@ export function App() {
         <Analysis analysis={analysis} market={selectedMarket} />
       </div>
       <AiReviewPanel flow={flow} loading={aiLoading} review={aiReview} />
+      <DecisionActions
+        symbol={symbol}
+        analysis={analysis}
+        aiReview={aiReview}
+        onRecorded={refreshDecisionStats}
+      />
       <BottomDesk analysis={analysis} market={selectedMarket} />
       <JournalDrawer
         open={journalOpen}
         stats={journalStats}
         onClose={() => setJournalOpen(false)}
       />
+      <DecisionJournalDrawer open={decisionOpen} onClose={() => setDecisionOpen(false)} />
     </main>
   );
 }
@@ -275,14 +297,18 @@ function Header({
   live,
   now,
   journalCount,
+  decisionCount,
   onJournalOpen,
+  onDecisionOpen,
   onRefresh,
 }: {
   status: LiveEngineStatus | null;
   live: boolean;
   now: number;
   journalCount: number | null;
+  decisionCount: number | null;
   onJournalOpen: () => void;
+  onDecisionOpen: () => void;
   onRefresh: () => Promise<void>;
 }) {
   const age = ageSeconds(status?.last_message_at ?? null);
@@ -303,6 +329,10 @@ function Header({
         DATA {age === null ? "—" : `${age.toFixed(1)}s`}
       </div>
       <div className="topbar-spacer" />
+      <button className="journal-button" onClick={onDecisionOpen} type="button">
+        <ClipboardList size={13} />
+        РЕШЕНИЯ <span>{decisionCount ?? 0}</span>
+      </button>
       {journalCount !== null && (
         <button className="journal-button" onClick={onJournalOpen} type="button">
           <BookOpen size={13} />

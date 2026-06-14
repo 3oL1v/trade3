@@ -4,6 +4,7 @@ import { App } from "./App";
 import "./styles.css";
 import "./desk.css";
 import "./journal.css";
+import "./decisions.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
