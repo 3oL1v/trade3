@@ -78,6 +78,8 @@ class Settings(BaseSettings):
     journal_taker_fee_rate_pct: float = Field(default=0.055, ge=0, le=1)
     journal_slippage_bps: float = Field(default=2, ge=0, le=100)
     journal_minimum_sample_size: int = Field(default=100, ge=20, le=1000)
+    manual_journal_enabled: bool = True
+    manual_journal_database_path: str = "data/trade3_manual_journal.sqlite3"
     ollama_enabled: bool = True
     ollama_base_url: str = "http://127.0.0.1:11434"
     ollama_model: str = "qwen3.5:4b"

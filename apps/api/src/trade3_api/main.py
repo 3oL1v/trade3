@@ -9,6 +9,13 @@ from .ai_models import AiMarketReview
 from .analysis_models import MarketAnalysisSnapshot
 from .bybit import BybitApiError, BybitPublicClient, SUPPORTED_INTERVALS_MINUTES
 from .config import get_settings
+from .decision_journal import ManualDecisionJournal
+from .decision_models import (
+    ManualDecision,
+    ManualDecisionList,
+    ManualDecisionRequest,
+    ManualDecisionStats,
+)
 from .journal import SignalJournal
 from .journal_models import JournalSignalList, JournalStats
 from .live_engine import LiveMarketEngine
@@ -71,6 +78,13 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     )
     if app.state.signal_journal:
         await app.state.signal_journal.initialize()
+    app.state.manual_journal = (
+        ManualDecisionJournal(database_path=settings.manual_journal_database_path)
+        if settings.manual_journal_enabled
+        else None
+    )
+    if app.state.manual_journal:
+        await app.state.manual_journal.initialize()
     app.state.live_engine = LiveMarketEngine(
         client=client,
         scanner=app.state.market_scanner,
@@ -271,4 +285,32 @@ async def journal_stats(request: Request) -> JournalStats:
     journal = request.app.state.signal_journal
     if journal is None:
         raise HTTPException(status_code=503, detail="signal journal is disabled")
+    return await journal.stats()
+
+
+@app.post("/v1/decisions", response_model=ManualDecision)
+async def record_decision(request: Request, decision: ManualDecisionRequest) -> ManualDecision:
+    journal: ManualDecisionJournal | None = request.app.state.manual_journal
+    if journal is None:
+        raise HTTPException(status_code=503, detail="manual decision journal is disabled")
+    return await journal.record(decision, datetime.now(UTC))
+
+
+@app.get("/v1/decisions", response_model=ManualDecisionList)
+async def list_decisions(
+    request: Request,
+    limit: Annotated[int, Query(ge=1, le=500)] = 100,
+    action: Annotated[str | None, Query(pattern=r"^[a-z]+$")] = None,
+) -> ManualDecisionList:
+    journal: ManualDecisionJournal | None = request.app.state.manual_journal
+    if journal is None:
+        raise HTTPException(status_code=503, detail="manual decision journal is disabled")
+    return ManualDecisionList(decisions=await journal.list_decisions(limit, action))
+
+
+@app.get("/v1/decisions/stats", response_model=ManualDecisionStats)
+async def decision_stats(request: Request) -> ManualDecisionStats:
+    journal: ManualDecisionJournal | None = request.app.state.manual_journal
+    if journal is None:
+        raise HTTPException(status_code=503, detail="manual decision journal is disabled")
     return await journal.stats()
