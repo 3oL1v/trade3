@@ -1,0 +1,82 @@
+[
+  {
+    "trial": 1,
+    "generated_at": "2026-06-11T23:57:27.992634Z",
+    "source": "baseline",
+    "parameters": {
+      "min_trend_separation_atr": 0.35,
+      "pullback_lookback": 4,
+      "pullback_band_atr": 0.25,
+      "min_stop_atr": 1.25,
+      "min_stop_percent": 0.75,
+      "max_stop_percent": 3.0,
+      "target_r": 2.0,
+      "min_volume_ratio": 1.1,
+      "min_close_strength": 0.65,
+      "stop_buffer_atr": 0.25,
+      "max_modeled_cost_r": 0.2,
+      "max_hold_hours": 12
+    },
+    "proposer_note": "Current V2 defaults.",
+    "critic_note": "Baseline is always measured before generated variants.",
+    "train": {
+      "trades": 5,
+      "expectancy_r": 1.291,
+      "profit_factor": 8.3224,
+      "cumulative_net_r": 6.455,
+      "max_drawdown_r": 0.8815,
+      "win_rate": 0.8,
+      "profitable_symbols": 1
+    },
+    "validation": {
+      "trades": 7,
+      "expectancy_r": -0.6708,
+      "profit_factor": 0.1834,
+      "cumulative_net_r": -4.6953,
+      "max_drawdown_r": 4.6953,
+      "win_rate": 0.1429,
+      "profitable_symbols": 0
+    },
+    "research_score": -81.424
+  },
+  {
+    "trial": 2,
+    "generated_at": "2026-06-11T23:57:55.551515Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.48,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.32,
+      "min_stop_atr": 1.55,
+      "min_stop_percent": 0.75,
+      "max_stop_percent": 3.5,
+      "target_r": 2.5,
+      "min_volume_ratio": 1.15,
+      "min_close_strength": 0.78,
+      "stop_buffer_atr": 0.45,
+      "max_modeled_cost_r": 0.12,
+      "max_hold_hours": 6
+    },
+    "proposer_note": "Adjusted to reduce drawdown risk by widening trend separation (0.40) and increasing stop buffer relative to ATR (0.30). Increased pullback lookback and band width to filter out noise, while raising close strength threshold slightly for higher conviction trades. Reduced target R and hold time to prioritize capital preservation over aggressive growth.",
+    "critic_note": "The proposed parameters suffer from excessive conservatism that likely leads to 'too few likely signals' and unrealistic stops relative to market volatility dynamics observed in Trial 1.\n\n1. **Overfitting Risk**: The combination of `min_trend_separation_atr` (0.4) with a high `pullback_lookback` (5) creates an overly rigid filter that may not generalize across different market regimes, similar to the failure mode seen when separation was 0.35.\n2. **Unrealistic Stops**: The proposed `min_stop_atr",
+    "train": {
+      "trades": 3,
+      "expectancy_r": -0.0309,
+      "profit_factor": 0.917,
+      "cumulative_net_r": -0.0928,
+      "max_drawdown_r": 1.1175,
+      "win_rate": 0.6667,
+      "profitable_symbols": 0
+    },
+    "validation": {
+      "trades": 5,
+      "expectancy_r": -0.5886,
+      "profit_factor": 0.1131,
+      "cumulative_net_r": -2.9428,
+      "max_drawdown_r": 2.9428,
+      "win_rate": 0.4,
+      "profitable_symbols": 0
+    },
+    "research_score": -82.2848
+  }
+]

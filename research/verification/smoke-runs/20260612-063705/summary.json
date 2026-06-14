@@ -1,0 +1,91 @@
+{
+  "status": "completed",
+  "hypothesis_id": "fixed-verification-smoke",
+  "source": "Pipeline smoke test only.",
+  "started_at": "2026-06-12 06:37:05.499311+00:00",
+  "completed_at": "2026-06-12 06:37:12.552079+00:00",
+  "parameters": {
+    "min_trend_separation_atr": 0.415,
+    "pullback_lookback": 7,
+    "pullback_band_atr": 0.239,
+    "min_stop_atr": 1.138,
+    "min_stop_percent": 0.6,
+    "max_stop_percent": 2.0,
+    "target_r": 2.385,
+    "min_volume_ratio": 1.567,
+    "min_close_strength": 0.578,
+    "stop_buffer_atr": 0.312,
+    "max_modeled_cost_r": 0.1749,
+    "max_hold_hours": 16
+  },
+  "windows": [
+    {
+      "window": {
+        "start": "2025-12-20T00:00:00Z",
+        "end": "2025-12-23T00:00:00Z"
+      },
+      "metrics": {
+        "trades": 3,
+        "expectancy_r": -1.1056,
+        "profit_factor": null,
+        "cumulative_net_r": -3.3168,
+        "max_drawdown_r": 3.3168,
+        "win_rate": 0.0,
+        "profitable_symbols": 0
+      },
+      "report": "C:\\trade3\\research\\verification\\smoke-runs\\20260612-063705\\window-1.json"
+    },
+    {
+      "window": {
+        "start": "2025-12-23T00:00:00Z",
+        "end": "2025-12-26T00:00:00Z"
+      },
+      "metrics": {
+        "trades": 3,
+        "expectancy_r": -1.135,
+        "profit_factor": null,
+        "cumulative_net_r": -3.405,
+        "max_drawdown_r": 3.405,
+        "win_rate": 0.0,
+        "profitable_symbols": 0
+      },
+      "report": "C:\\trade3\\research\\verification\\smoke-runs\\20260612-063705\\window-2.json"
+    }
+  ],
+  "symbols": [
+    {
+      "symbol": "BTCUSDT",
+      "trades": 3,
+      "expectancy_r": -1.1251,
+      "cumulative_net_r": -3.3754,
+      "profit_factor": null,
+      "win_rate": 0.0
+    },
+    {
+      "symbol": "ETHUSDT",
+      "trades": 3,
+      "expectancy_r": -1.1155,
+      "cumulative_net_r": -3.3465,
+      "profit_factor": null,
+      "win_rate": 0.0
+    }
+  ],
+  "decision": {
+    "passed": false,
+    "checks": {
+      "minimum_total_trades": true,
+      "minimum_profitable_symbols": false,
+      "minimum_aggregate_profit_factor": false,
+      "positive_expectancy_each_window": true,
+      "maximum_single_symbol_profit_share": false
+    },
+    "total_trades": 6,
+    "aggregate_expectancy_r": -1.1203,
+    "aggregate_profit_factor": null,
+    "cumulative_net_r": -6.7219,
+    "max_drawdown_r": 6.7219,
+    "profitable_symbols": 0,
+    "largest_positive_symbol_share": null
+  },
+  "warning": "This is a frozen historical verification, not permission to trade. No parameters were changed after reading these windows."
+}

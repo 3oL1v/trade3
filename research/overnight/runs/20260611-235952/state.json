@@ -1,0 +1,8 @@
+{
+  "status": "failed",
+  "started_at": "2026-06-11 23:59:52.839924+00:00",
+  "updated_at": "2026-06-12 00:00:10.519246+00:00",
+  "trials_completed": 0,
+  "best_score": null,
+  "error": "Bybit retCode=10006: Too many visits. Exceeded the API Rate Limit."
+}

@@ -1,0 +1,802 @@
+[
+  {
+    "trial": 54,
+    "generated_at": "2026-06-12T00:49:19.851097Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.34,
+      "pullback_lookback": 5,
+      "pullback_band_atr": 0.18,
+      "min_stop_atr": 1.6,
+      "min_stop_percent": 0.72,
+      "max_stop_percent": 2.9,
+      "target_r": 3.2,
+      "min_volume_ratio": 1.45,
+      "min_close_strength": 0.82,
+      "stop_buffer_atr": 0.26,
+      "max_modeled_cost_r": 0.14,
+      "max_hold_hours": 17
+    },
+    "proposer_note": "Adjusting from recent failures by raising min_stop_atr to tighten stops while reducing max_hold_hours to filter low-quality continuations; increasing target_r and lowering volume ratio requirements may help recover underperforming trades.",
+    "critic_note": "The proposed parameters suffer from three critical flaws relative to the historical failure pattern: (1) **Overfitting risk**: The proposal attempts to 'tighten stops' by raising `min_stop_atr` while simultaneously lowering costs (`max_modeled_cost_r`) and holding time, which creates a fragile configuration that likely over-optimizes for short-term noise rather than robust trend continuation. Trial 50 is nearly identical in structure (high volume/strength filters) but failed validation; the user",
+    "train": {
+      "trades": 93,
+      "expectancy_r": 0.3506,
+      "profit_factor": 1.6191,
+      "cumulative_net_r": 32.6051,
+      "max_drawdown_r": 21.5613,
+      "win_rate": 0.4301,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 39,
+      "expectancy_r": -0.1258,
+      "profit_factor": 0.7938,
+      "cumulative_net_r": -4.9057,
+      "max_drawdown_r": 9.6005,
+      "win_rate": 0.3333,
+      "profitable_symbols": 1
+    },
+    "research_score": -13.1318
+  },
+  {
+    "trial": 24,
+    "generated_at": "2026-06-12T00:24:22.380135Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.42,
+      "pullback_lookback": 3,
+      "pullback_band_atr": 0.18,
+      "min_stop_atr": 1.65,
+      "min_stop_percent": 0.7,
+      "max_stop_percent": 3.0,
+      "target_r": 2.4,
+      "min_volume_ratio": 1.35,
+      "min_close_strength": 0.85,
+      "stop_buffer_atr": 0.28,
+      "max_modeled_cost_r": 0.16,
+      "max_hold_hours": 18
+    },
+    "proposer_note": "Adjusting away from the high-stops of Trial 4 (min_stop_atr: 2.0) and low-separation settings to balance entry frequency with noise rejection at min_trend_separation_atr=0.38. The higher close_strength threshold (0.82 vs most trials' ~0.75) aims to filter out the poor validation win rates seen in recent years, while keeping pullback_lookback lower (4 cycles) to improve trade frequency compared to 6-cycle setups.",
+    "critic_note": "The proposed parameters suffer from three critical flaws: (1) **Overfitting risk**: The combination of high `min_close_strength` (0.82), specific `pullback_lookback` (4), and narrow stop ranges suggests curve-fitting to recent noise rather than capturing robust market structure, especially given the historical pattern where higher strength thresholds correlate with negative validation expectancy in Trials 13-23. (2) **Unrealistic stops**: The proposal attempts to lower min_stop_atr from Trial 4/",
+    "train": {
+      "trades": 77,
+      "expectancy_r": 0.5122,
+      "profit_factor": 2.003,
+      "cumulative_net_r": 39.4359,
+      "max_drawdown_r": 13.7174,
+      "win_rate": 0.4935,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 31,
+      "expectancy_r": -0.175,
+      "profit_factor": 0.7191,
+      "cumulative_net_r": -5.4242,
+      "max_drawdown_r": 6.4989,
+      "win_rate": 0.3871,
+      "profitable_symbols": 2
+    },
+    "research_score": -14.3878
+  },
+  {
+    "trial": 30,
+    "generated_at": "2026-06-12T00:29:28.766503Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.32,
+      "pullback_lookback": 4,
+      "pullback_band_atr": 0.15,
+      "min_stop_atr": 1.6,
+      "min_stop_percent": 0.7,
+      "max_stop_percent": 3.0,
+      "target_r": 2.8,
+      "min_volume_ratio": 1.4,
+      "min_close_strength": 0.75,
+      "stop_buffer_atr": 0.26,
+      "max_modeled_cost_r": 0.16,
+      "max_hold_hours": 22
+    },
+    "proposer_note": "This proposal adjusts slightly from the best-performing trial (Trial 29) by increasing `pullback_lookback` to 4 for tighter trend confirmation and raising `min_close_strength` to 0.78 while lowering cost tolerance (`max_modeled_cost_r`) to 0.14, aiming to improve validation expectancy without sacrificing trade volume or drawdown control.",
+    "critic_note": "The proposed parameters suffer from **overfitting** by excessively tightening constraints (raising `min_close_strength` to 0.78 and lowering cost tolerance) relative to the best-performing baseline (Trial 29), which already showed significant validation failure (-36% expectancy). The rationale claims this will improve expectancy without sacrificing volume, but prior trials with similar tightness settings consistently fail in validation due to **lack of diversity** across symbols. Increasing `min",
+    "train": {
+      "trades": 123,
+      "expectancy_r": 0.3774,
+      "profit_factor": 1.6165,
+      "cumulative_net_r": 46.4157,
+      "max_drawdown_r": 21.9651,
+      "win_rate": 0.4309,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 66,
+      "expectancy_r": -0.1421,
+      "profit_factor": 0.8039,
+      "cumulative_net_r": -9.3798,
+      "max_drawdown_r": 17.0028,
+      "win_rate": 0.3333,
+      "profitable_symbols": 2
+    },
+    "research_score": -16.6908
+  },
+  {
+    "trial": 33,
+    "generated_at": "2026-06-12T00:32:11.493172Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.36,
+      "pullback_lookback": 5,
+      "pullback_band_atr": 0.2,
+      "min_stop_atr": 1.8,
+      "min_stop_percent": 0.45,
+      "max_stop_percent": 3.0,
+      "target_r": 2.7,
+      "min_volume_ratio": 1.3,
+      "min_close_strength": 0.65,
+      "stop_buffer_atr": 0.35,
+      "max_modeled_cost_r": 0.14,
+      "max_hold_hours": 20
+    },
+    "proposer_note": "This proposal shifts away from the recent trend of aggressive stop expansions (Trial 24-32) by tightening `min_stop_atr` to reduce drawdown risk while increasing entry strictness via a higher `pullback_lookback`. It lowers `target_r` slightly and reduces volume requirements to generate more trades, aiming for improved sample size. The lower `stop_buffer_atr` and moderate hold time are intended to mitigate overfitting observed in Trials 29-31 where cost models and holding periods were maximized.",
+    "critic_note": "The proposed parameters show a logical shift in direction but suffer from three critical flaws identified by the loop history: (1) **Overly aggressive stop tightening**: Reducing `min_stop_atr` to 1.8 while increasing entry strictness (`pullback_lookback`: 5, `target_r`: 2.7) creates an asymmetric risk/reward profile that historically leads to negative expectancy in validation sets (e.g., Trial 30 and 31). The current proposal ignores the need for a wider stop buffer relative to the tighter pull",
+    "train": {
+      "trades": 140,
+      "expectancy_r": 0.3251,
+      "profit_factor": 1.5561,
+      "cumulative_net_r": 45.5191,
+      "max_drawdown_r": 14.8534,
+      "win_rate": 0.4,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 75,
+      "expectancy_r": -0.1573,
+      "profit_factor": 0.7709,
+      "cumulative_net_r": -11.7998,
+      "max_drawdown_r": 18.5009,
+      "win_rate": 0.3333,
+      "profitable_symbols": 2
+    },
+    "research_score": -17.0876
+  },
+  {
+    "trial": 20,
+    "generated_at": "2026-06-12T00:20:48.460024Z",
+    "source": "random_agent_error_fallback",
+    "parameters": {
+      "min_trend_separation_atr": 0.3,
+      "pullback_lookback": 2,
+      "pullback_band_atr": 0.1,
+      "min_stop_atr": 1.0,
+      "min_stop_percent": 0.9,
+      "max_stop_percent": 3.0,
+      "target_r": 2.5,
+      "min_volume_ratio": 1.25,
+      "min_close_strength": 0.75,
+      "stop_buffer_atr": 0.45,
+      "max_modeled_cost_r": 0.15,
+      "max_hold_hours": 24
+    },
+    "proposer_note": "Ollama proposal unavailable.",
+    "critic_note": "ValidationError: 3 validation errors for StrategyProposal\nparameters.min_stop_atr\n  Input should be less than or equal to 2.5 [type=less_than_equal, input_value=3.5, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.13/v/less_than_equal\nparameters.target_r\n  Input should be less than or equal to 4 [type=less_than_equal, input_value=4.2, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.13/v/less_than_equal\nparameters.min_volume_rati",
+    "train": {
+      "trades": 106,
+      "expectancy_r": 0.3163,
+      "profit_factor": 1.5002,
+      "cumulative_net_r": 33.532,
+      "max_drawdown_r": 19.0972,
+      "win_rate": 0.4245,
+      "profitable_symbols": 4
+    },
+    "validation": {
+      "trades": 50,
+      "expectancy_r": -0.168,
+      "profit_factor": 0.7695,
+      "cumulative_net_r": -8.3996,
+      "max_drawdown_r": 13.4349,
+      "win_rate": 0.32,
+      "profitable_symbols": 1
+    },
+    "research_score": -18.1239
+  },
+  {
+    "trial": 60,
+    "generated_at": "2026-06-12T00:53:46.121118Z",
+    "source": "random_agent_error_fallback",
+    "parameters": {
+      "min_trend_separation_atr": 0.9,
+      "pullback_lookback": 2,
+      "pullback_band_atr": 0.15,
+      "min_stop_atr": 1.5,
+      "min_stop_percent": 1.1,
+      "max_stop_percent": 2.0,
+      "target_r": 3.0,
+      "min_volume_ratio": 1.1,
+      "min_close_strength": 0.7,
+      "stop_buffer_atr": 0.15,
+      "max_modeled_cost_r": 0.3,
+      "max_hold_hours": 12
+    },
+    "proposer_note": "Ollama proposal unavailable.",
+    "critic_note": "ValidationError: 1 validation error for StrategyProposal\nparameters.target_r\n  Input should be less than or equal to 4 [type=less_than_equal, input_value=4.5, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.13/v/less_than_equal",
+    "train": {
+      "trades": 121,
+      "expectancy_r": 0.4339,
+      "profit_factor": 1.8058,
+      "cumulative_net_r": 52.5071,
+      "max_drawdown_r": 14.8861,
+      "win_rate": 0.4876,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 70,
+      "expectancy_r": -0.176,
+      "profit_factor": 0.7386,
+      "cumulative_net_r": -12.3195,
+      "max_drawdown_r": 20.6297,
+      "win_rate": 0.3857,
+      "profitable_symbols": 1
+    },
+    "research_score": -18.8457
+  },
+  {
+    "trial": 12,
+    "generated_at": "2026-06-12T00:13:59.537859Z",
+    "source": "random_agent_error_fallback",
+    "parameters": {
+      "min_trend_separation_atr": 0.2,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.25,
+      "min_stop_atr": 2.0,
+      "min_stop_percent": 0.35,
+      "max_stop_percent": 3.0,
+      "target_r": 3.0,
+      "min_volume_ratio": 1.5,
+      "min_close_strength": 0.75,
+      "stop_buffer_atr": 0.1,
+      "max_modeled_cost_r": 0.2,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "Ollama proposal unavailable.",
+    "critic_note": "ValidationError: 1 validation error for StrategyProposal\nparameters.min_stop_atr\n  Input should be less than or equal to 2.5 [type=less_than_equal, input_value=2.6, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.13/v/less_than_equal",
+    "train": {
+      "trades": 177,
+      "expectancy_r": 0.2774,
+      "profit_factor": 1.4426,
+      "cumulative_net_r": 49.0964,
+      "max_drawdown_r": 24.6704,
+      "win_rate": 0.4011,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 102,
+      "expectancy_r": -0.1366,
+      "profit_factor": 0.7952,
+      "cumulative_net_r": -13.9309,
+      "max_drawdown_r": 26.6257,
+      "win_rate": 0.3235,
+      "profitable_symbols": 1
+    },
+    "research_score": -19.7706
+  },
+  {
+    "trial": 13,
+    "generated_at": "2026-06-12T00:14:54.799722Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.28,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.15,
+      "min_stop_atr": 1.75,
+      "min_stop_percent": 0.4,
+      "max_stop_percent": 3.0,
+      "target_r": 2.8,
+      "min_volume_ratio": 1.3,
+      "min_close_strength": 0.68,
+      "stop_buffer_atr": 0.22,
+      "max_modeled_cost_r": 0.15,
+      "max_hold_hours": 14
+    },
+    "proposer_note": "Shifts trend separation slightly higher to reduce false breakout traps (addressing low win rates in Trials 8,9,10) while increasing pullback lookback and band width for stricter entry confirmation; raises target R to counteract negative expectancy seen across validation sets by improving risk/reward asymmetry rather than chasing volume or lower stops.",
+    "critic_note": "The proposed parameters suffer from three critical flaws identified in the historical trial data: (1) **Overfitting to noise**: Increasing `min_trend_separation_atr` too aggressively (to 0.25) while reducing lookback creates a fragile signal that likely overfits Train sets but fails on Validation, as seen in Trials 8-10 where high separation or low volume leads to negative expectancy (-0.236 to -0.447). The current proposal aims for 'stricter confirmation' but risks removing too many valid trend",
+    "train": {
+      "trades": 162,
+      "expectancy_r": 0.3745,
+      "profit_factor": 1.6744,
+      "cumulative_net_r": 60.6725,
+      "max_drawdown_r": 22.4664,
+      "win_rate": 0.4506,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 86,
+      "expectancy_r": -0.1695,
+      "profit_factor": 0.729,
+      "cumulative_net_r": -14.5732,
+      "max_drawdown_r": 20.3315,
+      "win_rate": 0.3605,
+      "profitable_symbols": 0
+    },
+    "research_score": -20.4393
+  },
+  {
+    "trial": 22,
+    "generated_at": "2026-06-12T00:22:44.227109Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.26,
+      "pullback_lookback": 5,
+      "pullback_band_atr": 0.17,
+      "min_stop_atr": 1.3,
+      "min_stop_percent": 0.4,
+      "max_stop_percent": 3.0,
+      "target_r": 2.8,
+      "min_volume_ratio": 1.35,
+      "min_close_strength": 0.72,
+      "stop_buffer_atr": 0.28,
+      "max_modeled_cost_r": 0.16,
+      "max_hold_hours": 18
+    },
+    "proposer_note": "Adjusting pullback lookback to 4 and stop ATR to 1.1 tightens entry criteria relative to previous trials (e.g., Trial 20's separation of 0.3), potentially reducing drawdown while maintaining volume filters around 1.3x. Increasing target R to 2.6 aims for a steeper risk-reward profile compared to the underperforming validation expectations in recent high-separation attempts, with moderate hold duration set at 20 hours.",
+    "critic_note": "The proposed parameters suffer from three critical flaws relative to the historical trial data: (1) **Overfitting Risk**: Increasing `pullback_lookback` and decreasing separation thresholds moves closer to Trial 20's configuration without addressing its negative validation expectancy (-0.168 R). Tightening entry criteria too aggressively often leads to 'too few likely signals,' reducing sample diversity in the backtest window. (2) **Unrealistic Stops**: Setting `min_stop_atr` at 1.1 is overly ag",
+    "train": {
+      "trades": 150,
+      "expectancy_r": 0.4009,
+      "profit_factor": 1.699,
+      "cumulative_net_r": 60.1295,
+      "max_drawdown_r": 23.2211,
+      "win_rate": 0.4467,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 83,
+      "expectancy_r": -0.1819,
+      "profit_factor": 0.7217,
+      "cumulative_net_r": -15.0937,
+      "max_drawdown_r": 24.1891,
+      "win_rate": 0.3253,
+      "profitable_symbols": 1
+    },
+    "research_score": -22.7805
+  },
+  {
+    "trial": 4,
+    "generated_at": "2026-06-12T00:08:19.072958Z",
+    "source": "random_agent_error_fallback",
+    "parameters": {
+      "min_trend_separation_atr": 0.4,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.5,
+      "min_stop_atr": 2.0,
+      "min_stop_percent": 1.1,
+      "max_stop_percent": 4.0,
+      "target_r": 1.8,
+      "min_volume_ratio": 1.5,
+      "min_close_strength": 0.6,
+      "stop_buffer_atr": 0.35,
+      "max_modeled_cost_r": 0.3,
+      "max_hold_hours": 12
+    },
+    "proposer_note": "Ollama proposal unavailable.",
+    "critic_note": "ValidationError: 2 validation errors for StrategyCritique\nparameters.min_stop_atr\n  Input should be less than or equal to 2.5 [type=less_than_equal, input_value=3.0, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.13/v/less_than_equal\nparameters.max_modeled_cost_r\n  Input should be greater than or equal to 0.1 [type=greater_than_equal, input_value=0.08, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.13/v/greater_than_equal",
+    "train": {
+      "trades": 282,
+      "expectancy_r": 0.1466,
+      "profit_factor": 1.2988,
+      "cumulative_net_r": 41.3422,
+      "max_drawdown_r": 19.0537,
+      "win_rate": 0.4752,
+      "profitable_symbols": 4
+    },
+    "validation": {
+      "trades": 163,
+      "expectancy_r": -0.1622,
+      "profit_factor": 0.7276,
+      "cumulative_net_r": -26.4396,
+      "max_drawdown_r": 32.7453,
+      "win_rate": 0.362,
+      "profitable_symbols": 0
+    },
+    "research_score": -23.0906
+  },
+  {
+    "trial": 16,
+    "generated_at": "2026-06-12T00:17:38.321109Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.14,
+      "pullback_lookback": 5,
+      "pullback_band_atr": 0.26,
+      "min_stop_atr": 1.3,
+      "min_stop_percent": 0.28,
+      "max_stop_percent": 3.8,
+      "target_r": 2.4,
+      "min_volume_ratio": 1.5,
+      "min_close_strength": 0.62,
+      "stop_buffer_atr": 0.15,
+      "max_modeled_cost_r": 0.24,
+      "max_hold_hours": 13
+    },
+    "proposer_note": "Trial 15 suffered from a massive valuation gap (-37.7R) with only ~4% trade volume despite high expectancy; this set reduces target R (2.2) and stop buffer to tighten the curve while widening pullback bands (0.28 ATR, 28% volatility filter) to capture more setups like Trial 13's structure but avoids its overly tight separation that hurt validation.",
+    "critic_note": "Trial 15 failed due to a massive valuation gap (-37.8R) and near-zero profitable symbols in validation (0), indicating severe overfitting despite the rationale claiming 'tighter curves.' The previous trial's high pullback band (0.28 ATR) likely allowed weak trends into the model, while the low stop buffer relative to target R exacerbated drawdowns during false signals.\n\nCorrected Logic:\n1. **Overfitting Mitigation**: Trial 15's validation expectancy was -37R with only ~4% volume; this suggests '",
+    "train": {
+      "trades": 255,
+      "expectancy_r": 0.0955,
+      "profit_factor": 1.1535,
+      "cumulative_net_r": 24.3519,
+      "max_drawdown_r": 32.9996,
+      "win_rate": 0.3882,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 164,
+      "expectancy_r": -0.1267,
+      "profit_factor": 0.8107,
+      "cumulative_net_r": -20.7718,
+      "max_drawdown_r": 36.5141,
+      "win_rate": 0.3598,
+      "profitable_symbols": 2
+    },
+    "research_score": -24.1558
+  },
+  {
+    "trial": 27,
+    "generated_at": "2026-06-12T00:27:12.473955Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.38,
+      "pullback_lookback": 5,
+      "pullback_band_atr": 0.24,
+      "min_stop_atr": 1.7,
+      "min_stop_percent": 0.9,
+      "max_stop_percent": 3.0,
+      "target_r": 2.6,
+      "min_volume_ratio": 1.5,
+      "min_close_strength": 0.8,
+      "stop_buffer_atr": 0.24,
+      "max_modeled_cost_r": 0.17,
+      "max_hold_hours": 18
+    },
+    "proposer_note": "This proposal introduces a tighter trend separation (0.35) and moderate pullback band width (0.28) to avoid noisy setups while maintaining volume filters at the upper end of previous successes (min_volume_ratio=1.4). It avoids exact copies by adjusting stop levels to be slightly wider in ATR but constrained closer to price (%), increasing target_r back down from 2.7-3.0 ranges seen in high-drawdown trials like #26 and #23. The min_close_strength is raised slightly (0.78) given the recent trend,赌",
+    "critic_note": "The proposed parameters suffer from overfitting to the specific noise of recent trials (specifically #23 and #26) by setting `min_trend_separation_atr` too tight at 0.35 while simultaneously increasing volume requirements without adjusting pullback dynamics, which creates a fragile signal definition. The rationale contains an unrelated character ('赌') indicating potential hallucination or injection issues that must be corrected. Furthermore, the validation scores across all prior trials (24-26)崖",
+    "train": {
+      "trades": 159,
+      "expectancy_r": 0.4121,
+      "profit_factor": 1.7449,
+      "cumulative_net_r": 65.5302,
+      "max_drawdown_r": 18.0931,
+      "win_rate": 0.4528,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 72,
+      "expectancy_r": -0.2279,
+      "profit_factor": 0.6861,
+      "cumulative_net_r": -16.4117,
+      "max_drawdown_r": 16.6819,
+      "win_rate": 0.3056,
+      "profitable_symbols": 0
+    },
+    "research_score": -24.1907
+  },
+  {
+    "trial": 36,
+    "generated_at": "2026-06-12T00:34:39.283188Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.48,
+      "pullback_lookback": 5,
+      "pullback_band_atr": 0.22,
+      "min_stop_atr": 1.75,
+      "min_stop_percent": 0.35,
+      "max_stop_percent": 2.6,
+      "target_r": 2.8,
+      "min_volume_ratio": 1.4,
+      "min_close_strength": 0.62,
+      "stop_buffer_atr": 0.15,
+      "max_modeled_cost_r": 0.22,
+      "max_hold_hours": 22
+    },
+    "proposer_note": "This proposal shifts away from the recent tendency for tight stop distances (Trial 35's high min_stop) and very wide bands by increasing pullback_band_atr to mitigate noise while maintaining a robust separation distance of 0.45 ATR. The extended lookback period (6 bars) is paired with a lower close strength threshold (0.6) to capture more trades, aiming for better trade frequency without sacrificing the wider stop logic seen in Trial 12 or 34 that reduced drawdown but increased validation loss.",
+    "critic_note": "The proposed parameters suffer from three critical flaws relative to the historical performance data: (1) **Overfitting Risk**: The combination of a very wide pullback band (`0.45` ATR vs typical `0.18-0.25`) and high separation distance creates an overly complex signal definition that likely overfits noise, similar to Trial 34's failure despite good train stats. (2) **Unrealistic Stops**: The proposed minimum stop of `1.95` ATR is significantly wider than the successful trials (e.g., Trials 20-",
+    "train": {
+      "trades": 177,
+      "expectancy_r": 0.3818,
+      "profit_factor": 1.5967,
+      "cumulative_net_r": 67.5844,
+      "max_drawdown_r": 16.2548,
+      "win_rate": 0.4237,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 92,
+      "expectancy_r": -0.2228,
+      "profit_factor": 0.7208,
+      "cumulative_net_r": -20.4949,
+      "max_drawdown_r": 26.7973,
+      "win_rate": 0.2935,
+      "profitable_symbols": 2
+    },
+    "research_score": -26.0905
+  },
+  {
+    "trial": 25,
+    "generated_at": "2026-06-12T00:25:24.164662Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.45,
+      "pullback_lookback": 3,
+      "pullback_band_atr": 0.22,
+      "min_stop_atr": 1.9,
+      "min_stop_percent": 0.75,
+      "max_stop_percent": 3.5,
+      "target_r": 2.6,
+      "min_volume_ratio": 1.45,
+      "min_close_strength": 0.82,
+      "stop_buffer_atr": 0.25,
+      "max_modeled_cost_r": 0.12,
+      "max_hold_hours": 12
+    },
+    "proposer_note": "Trial 24 showed negative validation expectancy despite decent train stats, suggesting the strategy was too aggressive or sensitive to noise (high stop buffer/low min_close_strength). This proposal tightens entry strength requirements and reduces hold time exposure while slightly lowering cost tolerance. By increasing `min_stop_atr` relative to previous attempts like Trial 12-20 and adjusting volume ratio up from trial 4's low, we aim for higher quality entries that survive the drawdown cycles, a",
+    "critic_note": "The proposed parameters in Trial 24 were rejected due to persistent negative validation expectancy (-0.175 R) despite decent training stats (0.512 R). The root cause analysis indicates the strategy is overfitting to noise and lacks robustness against drawdown cycles, evidenced by a widening gap between train and validation expectations across all recent trials.\n\nCorrective logic:\n1. **Overfitting & Noise Sensitivity**: Trials 20-24 show increasing `min_close_strength` requirements (up to 0.85)并未",
+    "train": {
+      "trades": 65,
+      "expectancy_r": 0.3033,
+      "profit_factor": 1.5738,
+      "cumulative_net_r": 19.7171,
+      "max_drawdown_r": 12.2445,
+      "win_rate": 0.4615,
+      "profitable_symbols": 4
+    },
+    "validation": {
+      "trades": 26,
+      "expectancy_r": -0.2749,
+      "profit_factor": 0.5066,
+      "cumulative_net_r": -7.1479,
+      "max_drawdown_r": 8.4781,
+      "win_rate": 0.3462,
+      "profitable_symbols": 1
+    },
+    "research_score": -26.4294
+  },
+  {
+    "trial": 8,
+    "generated_at": "2026-06-12T00:11:14.476898Z",
+    "source": "random_agent_error_fallback",
+    "parameters": {
+      "min_trend_separation_atr": 0.7,
+      "pullback_lookback": 5,
+      "pullback_band_atr": 0.1,
+      "min_stop_atr": 0.75,
+      "min_stop_percent": 0.35,
+      "max_stop_percent": 3.5,
+      "target_r": 2.0,
+      "min_volume_ratio": 1.0,
+      "min_close_strength": 0.6,
+      "stop_buffer_atr": 0.45,
+      "max_modeled_cost_r": 0.15,
+      "max_hold_hours": 6
+    },
+    "proposer_note": "Ollama proposal unavailable.",
+    "critic_note": "ValidationError: 2 validation errors for StrategyProposal\nparameters.min_stop_atr\n  Input should be less than or equal to 2.5 [type=less_than_equal, input_value=3.0, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.13/v/less_than_equal\nparameters.min_stop_percent\n  Input should be less than or equal to 1.5 [type=less_than_equal, input_value=1.6, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.13/v/less_than_equal",
+    "train": {
+      "trades": 168,
+      "expectancy_r": 0.1501,
+      "profit_factor": 1.339,
+      "cumulative_net_r": 25.2163,
+      "max_drawdown_r": 13.5639,
+      "win_rate": 0.5119,
+      "profitable_symbols": 4
+    },
+    "validation": {
+      "trades": 88,
+      "expectancy_r": -0.236,
+      "profit_factor": 0.571,
+      "cumulative_net_r": -20.7652,
+      "max_drawdown_r": 21.3239,
+      "win_rate": 0.2955,
+      "profitable_symbols": 0
+    },
+    "research_score": -26.5919
+  },
+  {
+    "trial": 52,
+    "generated_at": "2026-06-12T00:47:45.643062Z",
+    "source": "random_agent_error_fallback",
+    "parameters": {
+      "min_trend_separation_atr": 0.9,
+      "pullback_lookback": 8,
+      "pullback_band_atr": 0.1,
+      "min_stop_atr": 1.25,
+      "min_stop_percent": 1.1,
+      "max_stop_percent": 4.0,
+      "target_r": 2.5,
+      "min_volume_ratio": 1.1,
+      "min_close_strength": 0.7,
+      "stop_buffer_atr": 0.1,
+      "max_modeled_cost_r": 0.3,
+      "max_hold_hours": 12
+    },
+    "proposer_note": "Ollama proposal unavailable.",
+    "critic_note": "ValidationError: 1 validation error for StrategyCritique\nparameters.min_close_strength\n  Input should be less than or equal to 0.85 [type=less_than_equal, input_value=0.9, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.13/v/less_than_equal",
+    "train": {
+      "trades": 170,
+      "expectancy_r": 0.2016,
+      "profit_factor": 1.3537,
+      "cumulative_net_r": 34.2672,
+      "max_drawdown_r": 20.94,
+      "win_rate": 0.4353,
+      "profitable_symbols": 4
+    },
+    "validation": {
+      "trades": 87,
+      "expectancy_r": -0.2267,
+      "profit_factor": 0.6535,
+      "cumulative_net_r": -19.7268,
+      "max_drawdown_r": 22.0886,
+      "win_rate": 0.3333,
+      "profitable_symbols": 1
+    },
+    "research_score": -27.4055
+  },
+  {
+    "trial": 50,
+    "generated_at": "2026-06-12T00:46:15.271772Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.35,
+      "pullback_lookback": 4,
+      "pullback_band_atr": 0.16,
+      "min_stop_atr": 1.7,
+      "min_stop_percent": 0.8,
+      "max_stop_percent": 2.9,
+      "target_r": 3.0,
+      "min_volume_ratio": 1.45,
+      "min_close_strength": 0.82,
+      "stop_buffer_atr": 0.27,
+      "max_modeled_cost_r": 0.12,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "Trial 50 seeks to improve upon the negative validation expectancy seen in recent trials (e.g., -0.17 to -0.62 R). This proposal tightens entry precision by increasing `min_close_strength` slightly and raising volume requirements, aiming for a cleaner signal setup without over-fitting. It adjusts risk parameters (`target_r`, stop distances) from previous attempts to balance trade count with expectancy. Crucially, it reduces the maximum modeled cost while maintaining a moderate hold period, which,",
+    "critic_note": "The proposed parameters for Trial 50 suffer from three critical flaws: (1) **Overfitting risk**: The combination of `min_close_strength` at 0.78 and `target_r` at 2.85 is highly specific to the training data, likely capturing noise rather than robust mean reversion patterns given the historical validation failures across similar parameter sets (e.g., Trials 49 and 30). (2) **Unrealistic stops**: A `min_stop_atr` of 1.62 with a high volume requirement creates an asymmetric risk profile where stop",
+    "train": {
+      "trades": 68,
+      "expectancy_r": 0.334,
+      "profit_factor": 1.5901,
+      "cumulative_net_r": 22.7122,
+      "max_drawdown_r": 9.3219,
+      "win_rate": 0.4118,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 28,
+      "expectancy_r": -0.3024,
+      "profit_factor": 0.5197,
+      "cumulative_net_r": -8.4673,
+      "max_drawdown_r": 11.2105,
+      "win_rate": 0.3214,
+      "profitable_symbols": 1
+    },
+    "research_score": -29.0437
+  },
+  {
+    "trial": 18,
+    "generated_at": "2026-06-12T00:19:13.055852Z",
+    "source": "random_agent_error_fallback",
+    "parameters": {
+      "min_trend_separation_atr": 0.3,
+      "pullback_lookback": 7,
+      "pullback_band_atr": 0.15,
+      "min_stop_atr": 0.75,
+      "min_stop_percent": 0.65,
+      "max_stop_percent": 4.0,
+      "target_r": 2.0,
+      "min_volume_ratio": 1.0,
+      "min_close_strength": 0.6,
+      "stop_buffer_atr": 0.25,
+      "max_modeled_cost_r": 0.15,
+      "max_hold_hours": 12
+    },
+    "proposer_note": "Ollama proposal unavailable.",
+    "critic_note": "ValidationError: 2 validation errors for StrategyCritique\nparameters.min_stop_atr\n  Input should be less than or equal to 2.5 [type=less_than_equal, input_value=2.8, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.13/v/less_than_equal\nparameters.max_modeled_cost_r\n  Input should be greater than or equal to 0.1 [type=greater_than_equal, input_value=0.08, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.13/v/greater_than_equal",
+    "train": {
+      "trades": 230,
+      "expectancy_r": 0.1524,
+      "profit_factor": 1.2918,
+      "cumulative_net_r": 35.0548,
+      "max_drawdown_r": 25.3666,
+      "win_rate": 0.4391,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 116,
+      "expectancy_r": -0.2221,
+      "profit_factor": 0.6369,
+      "cumulative_net_r": -25.7625,
+      "max_drawdown_r": 27.6203,
+      "win_rate": 0.3534,
+      "profitable_symbols": 0
+    },
+    "research_score": -29.6706
+  },
+  {
+    "trial": 37,
+    "generated_at": "2026-06-12T00:35:38.830162Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.48,
+      "pullback_lookback": 4,
+      "pullback_band_atr": 0.19,
+      "min_stop_atr": 2.0,
+      "min_stop_percent": 0.75,
+      "max_stop_percent": 2.3,
+      "target_r": 2.8,
+      "min_volume_ratio": 1.4,
+      "min_close_strength": 0.76,
+      "stop_buffer_atr": 0.25,
+      "max_modeled_cost_r": 0.14,
+      "max_hold_hours": 20
+    },
+    "proposer_note": "Trials recently show a persistent negative validation expectancy despite decent train scores (approx -26 to -41 score). This suggests overfitting or aggressive parameters that fail on unseen data. To improve robustness: I will tighten entry requirements by increasing `min_trend_separation_atr` and `pullback_band_atr`, while narrowing the stop loss range (`max_stop_percent`) to reduce noise. Increasing `target_r` slightly aims for better risk/reward, but lowering `min_close_strength` from 0.85 (T",
+    "critic_note": "The proposed parameters suffer from three critical flaws identified in the review:\n\n1. **Overfitting via Excessive Constraints**: The proposal attempts to fix negative validation expectancy by tightening *entry* filters (`min_trend_separation_atr`, `pullback_band_atr`) and relaxing exit/position constraints (`max_hold_hours`), but ignores that previous trials (e.g., Trial 34) with similar tight entries still failed. This suggests the current strategy lacks a fundamental edge, not just parameter-",
+    "train": {
+      "trades": 91,
+      "expectancy_r": 0.3416,
+      "profit_factor": 1.5537,
+      "cumulative_net_r": 31.0837,
+      "max_drawdown_r": 15.94,
+      "win_rate": 0.3956,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 43,
+      "expectancy_r": -0.2942,
+      "profit_factor": 0.6249,
+      "cumulative_net_r": -12.6501,
+      "max_drawdown_r": 13.3923,
+      "win_rate": 0.2791,
+      "profitable_symbols": 1
+    },
+    "research_score": -30.2173
+  },
+  {
+    "trial": 59,
+    "generated_at": "2026-06-12T00:53:08.533970Z",
+    "source": "random_agent_error_fallback",
+    "parameters": {
+      "min_trend_separation_atr": 0.2,
+      "pullback_lookback": 4,
+      "pullback_band_atr": 0.35,
+      "min_stop_atr": 0.75,
+      "min_stop_percent": 1.1,
+      "max_stop_percent": 2.0,
+      "target_r": 1.8,
+      "min_volume_ratio": 1.1,
+      "min_close_strength": 0.65,
+      "stop_buffer_atr": 0.25,
+      "max_modeled_cost_r": 0.2,
+      "max_hold_hours": 12
+    },
+    "proposer_note": "Ollama proposal unavailable.",
+    "critic_note": "ValidationError: 1 validation error for StrategyCritique\nparameters.min_stop_atr\n  Input should be less than or equal to 2.5 [type=less_than_equal, input_value=3.0, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.13/v/less_than_equal",
+    "train": {
+      "trades": 278,
+      "expectancy_r": 0.1022,
+      "profit_factor": 1.1939,
+      "cumulative_net_r": 28.4217,
+      "max_drawdown_r": 26.0427,
+      "win_rate": 0.4676,
+      "profitable_symbols": 4
+    },
+    "validation": {
+      "trades": 185,
+      "expectancy_r": -0.1832,
+      "profit_factor": 0.7068,
+      "cumulative_net_r": -33.8948,
+      "max_drawdown_r": 44.5922,
+      "win_rate": 0.3676,
+      "profitable_symbols": 0
+    },
+    "research_score": -30.2766
+  }
+]

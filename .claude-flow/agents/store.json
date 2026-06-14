@@ -1,0 +1,192 @@
+{
+  "agents": {
+    "agent-1781195416961-mzq4rp": {
+      "agentId": "agent-1781195416961-mzq4rp",
+      "agentType": "reviewer",
+      "status": "terminated",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "task": "Review the Trade3 public Bybit market-data client and top-20 scanner. Focus on correctness, stale/open candle handling, unsafe trading capabilities, input validation, filtering logic, and missing tests. Do not edit files. Return concise findings.",
+        "timeout": 300
+      },
+      "createdAt": "2026-06-11T16:30:17.070Z",
+      "model": "opus",
+      "modelRoutedBy": "router",
+      "currentTask": "task-1781195450276-2fr1sp"
+    },
+    "agent-1781221965766-5ak9n9": {
+      "agentId": "agent-1781221965766-5ak9n9",
+      "agentType": "researcher",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "task": "Propose bounded JSON parameters for offline backtests only. Never edit files or place orders.",
+        "timeout": 30,
+        "autoTools": false
+      },
+      "createdAt": "2026-06-11T23:52:45.814Z",
+      "model": "opus",
+      "modelRoutedBy": "router"
+    },
+    "agent-1781222387699-pgwqgj": {
+      "agentId": "agent-1781222387699-pgwqgj",
+      "agentType": "researcher",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "task": "Propose bounded JSON parameters for offline replay only.",
+        "timeout": 30,
+        "autoTools": false
+      },
+      "createdAt": "2026-06-11T23:59:47.709Z",
+      "model": "haiku",
+      "modelRoutedBy": "router"
+    },
+    "agent-1781222389868-1py2hm": {
+      "agentId": "agent-1781222389868-1py2hm",
+      "agentType": "reviewer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "task": "Critique bounded JSON parameters for offline replay only.",
+        "timeout": 30,
+        "autoTools": false
+      },
+      "createdAt": "2026-06-11T23:59:49.875Z",
+      "model": "sonnet",
+      "modelRoutedBy": "router"
+    },
+    "agent-1781222500724-zs9k7n": {
+      "agentId": "agent-1781222500724-zs9k7n",
+      "agentType": "researcher",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "task": "Propose bounded JSON parameters for offline replay only.",
+        "timeout": 30,
+        "autoTools": false
+      },
+      "createdAt": "2026-06-12T00:01:40.734Z",
+      "model": "opus",
+      "modelRoutedBy": "router"
+    },
+    "agent-1781222503399-0d15rf": {
+      "agentId": "agent-1781222503399-0d15rf",
+      "agentType": "reviewer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "task": "Critique bounded JSON parameters for offline replay only.",
+        "timeout": 30,
+        "autoTools": false
+      },
+      "createdAt": "2026-06-12T00:01:43.408Z",
+      "model": "sonnet",
+      "modelRoutedBy": "router"
+    },
+    "agent-1781222878832-qlqm5u": {
+      "agentId": "agent-1781222878832-qlqm5u",
+      "agentType": "researcher",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "task": "Propose bounded JSON parameters for offline replay only.",
+        "timeout": 30,
+        "autoTools": false
+      },
+      "createdAt": "2026-06-12T00:07:58.843Z",
+      "model": "sonnet",
+      "modelRoutedBy": "router"
+    },
+    "agent-1781222881623-04mtx3": {
+      "agentId": "agent-1781222881623-04mtx3",
+      "agentType": "reviewer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "task": "Critique bounded JSON parameters for offline replay only.",
+        "timeout": 30,
+        "autoTools": false
+      },
+      "createdAt": "2026-06-12T00:08:01.632Z",
+      "model": "sonnet",
+      "modelRoutedBy": "router"
+    },
+    "agent-1781347993346-o809nn": {
+      "agentId": "agent-1781347993346-o809nn",
+      "agentType": "reviewer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "task": "Reply only LOCAL_OK. Do not use tools.",
+        "timeout": 60,
+        "autoTools": false
+      },
+      "createdAt": "2026-06-13T10:53:13.593Z",
+      "model": "sonnet",
+      "modelRoutedBy": "router"
+    },
+    "agent-1781349380138-6vgd08": {
+      "agentId": "agent-1781349380138-6vgd08",
+      "agentType": "researcher",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "task": "Plan bounded Trade3 tasks from supplied local context only.",
+        "timeout": 120,
+        "autoTools": false
+      },
+      "createdAt": "2026-06-13T11:16:20.162Z",
+      "model": "sonnet",
+      "modelRoutedBy": "router"
+    },
+    "agent-1781349383920-a1gcv5": {
+      "agentId": "agent-1781349383920-a1gcv5",
+      "agentType": "reviewer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "task": "Critique bounded Trade3 plans from supplied local context only.",
+        "timeout": 120,
+        "autoTools": false
+      },
+      "createdAt": "2026-06-13T11:16:23.934Z",
+      "model": "sonnet",
+      "modelRoutedBy": "router"
+    }
+  },
+  "version": "3.0.0"
+}

@@ -1,0 +1,251 @@
+{
+  "status": "completed",
+  "hypothesis_id": "trend-continuation-v2-trial-485-frozen",
+  "source": "Selected as rank 1 by train+validation score before the 2026-05-13 to 2026-06-10 holdout was opened.",
+  "started_at": "2026-06-12 06:37:28.412998+00:00",
+  "completed_at": "2026-06-12 06:52:28.239752+00:00",
+  "parameters": {
+    "min_trend_separation_atr": 0.415,
+    "pullback_lookback": 7,
+    "pullback_band_atr": 0.239,
+    "min_stop_atr": 1.138,
+    "min_stop_percent": 0.6,
+    "max_stop_percent": 2.0,
+    "target_r": 2.385,
+    "min_volume_ratio": 1.567,
+    "min_close_strength": 0.578,
+    "stop_buffer_atr": 0.312,
+    "max_modeled_cost_r": 0.1749,
+    "max_hold_hours": 16
+  },
+  "windows": [
+    {
+      "window": {
+        "start": "2025-07-01T00:00:00Z",
+        "end": "2025-09-01T00:00:00Z"
+      },
+      "metrics": {
+        "trades": 685,
+        "expectancy_r": -0.0598,
+        "profit_factor": 0.9134,
+        "cumulative_net_r": -40.978,
+        "max_drawdown_r": 121.257,
+        "win_rate": 0.3474,
+        "profitable_symbols": 8
+      },
+      "report": "C:\\trade3\\research\\verification\\runs\\20260612-063728\\window-1.json"
+    },
+    {
+      "window": {
+        "start": "2025-09-01T00:00:00Z",
+        "end": "2025-11-01T00:00:00Z"
+      },
+      "metrics": {
+        "trades": 589,
+        "expectancy_r": -0.1617,
+        "profit_factor": 0.7797,
+        "cumulative_net_r": -95.2332,
+        "max_drawdown_r": 101.5567,
+        "win_rate": 0.3226,
+        "profitable_symbols": 7
+      },
+      "report": "C:\\trade3\\research\\verification\\runs\\20260612-063728\\window-2.json"
+    },
+    {
+      "window": {
+        "start": "2025-11-01T00:00:00Z",
+        "end": "2026-01-01T00:00:00Z"
+      },
+      "metrics": {
+        "trades": 491,
+        "expectancy_r": -0.252,
+        "profit_factor": 0.6799,
+        "cumulative_net_r": -123.7345,
+        "max_drawdown_r": 149.1391,
+        "win_rate": 0.2749,
+        "profitable_symbols": 3
+      },
+      "report": "C:\\trade3\\research\\verification\\runs\\20260612-063728\\window-3.json"
+    }
+  ],
+  "symbols": [
+    {
+      "symbol": "BTCUSDT",
+      "trades": 81,
+      "expectancy_r": -0.1274,
+      "cumulative_net_r": -10.3221,
+      "profit_factor": 0.7798,
+      "win_rate": 0.4198
+    },
+    {
+      "symbol": "ETHUSDT",
+      "trades": 96,
+      "expectancy_r": 0.0196,
+      "cumulative_net_r": 1.8794,
+      "profit_factor": 1.0301,
+      "win_rate": 0.3646
+    },
+    {
+      "symbol": "SOLUSDT",
+      "trades": 109,
+      "expectancy_r": -0.1185,
+      "cumulative_net_r": -12.919,
+      "profit_factor": 0.8375,
+      "win_rate": 0.3119
+    },
+    {
+      "symbol": "XRPUSDT",
+      "trades": 103,
+      "expectancy_r": -0.1862,
+      "cumulative_net_r": -19.1745,
+      "profit_factor": 0.7459,
+      "win_rate": 0.3107
+    },
+    {
+      "symbol": "DOGEUSDT",
+      "trades": 90,
+      "expectancy_r": -0.0125,
+      "cumulative_net_r": -1.124,
+      "profit_factor": 0.9827,
+      "win_rate": 0.3222
+    },
+    {
+      "symbol": "ADAUSDT",
+      "trades": 99,
+      "expectancy_r": -0.3128,
+      "cumulative_net_r": -30.9623,
+      "profit_factor": 0.6147,
+      "win_rate": 0.2727
+    },
+    {
+      "symbol": "BNBUSDT",
+      "trades": 87,
+      "expectancy_r": -0.0828,
+      "cumulative_net_r": -7.2032,
+      "profit_factor": 0.8807,
+      "win_rate": 0.3448
+    },
+    {
+      "symbol": "AVAXUSDT",
+      "trades": 96,
+      "expectancy_r": 0.051,
+      "cumulative_net_r": 4.8919,
+      "profit_factor": 1.0717,
+      "win_rate": 0.3542
+    },
+    {
+      "symbol": "LINKUSDT",
+      "trades": 75,
+      "expectancy_r": -0.2705,
+      "cumulative_net_r": -20.2882,
+      "profit_factor": 0.639,
+      "win_rate": 0.2933
+    },
+    {
+      "symbol": "DOTUSDT",
+      "trades": 97,
+      "expectancy_r": -0.2008,
+      "cumulative_net_r": -19.481,
+      "profit_factor": 0.7384,
+      "win_rate": 0.299
+    },
+    {
+      "symbol": "LTCUSDT",
+      "trades": 93,
+      "expectancy_r": -0.1821,
+      "cumulative_net_r": -16.937,
+      "profit_factor": 0.7592,
+      "win_rate": 0.3011
+    },
+    {
+      "symbol": "BCHUSDT",
+      "trades": 82,
+      "expectancy_r": 0.0369,
+      "cumulative_net_r": 3.0266,
+      "profit_factor": 1.0558,
+      "win_rate": 0.378
+    },
+    {
+      "symbol": "NEARUSDT",
+      "trades": 94,
+      "expectancy_r": -0.4802,
+      "cumulative_net_r": -45.1425,
+      "profit_factor": 0.4325,
+      "win_rate": 0.2234
+    },
+    {
+      "symbol": "SUIUSDT",
+      "trades": 98,
+      "expectancy_r": -0.2869,
+      "cumulative_net_r": -28.1148,
+      "profit_factor": 0.637,
+      "win_rate": 0.2755
+    },
+    {
+      "symbol": "APTUSDT",
+      "trades": 100,
+      "expectancy_r": -0.0957,
+      "cumulative_net_r": -9.5673,
+      "profit_factor": 0.8714,
+      "win_rate": 0.32
+    },
+    {
+      "symbol": "ARBUSDT",
+      "trades": 74,
+      "expectancy_r": -0.2121,
+      "cumulative_net_r": -15.6943,
+      "profit_factor": 0.7221,
+      "win_rate": 0.2973
+    },
+    {
+      "symbol": "OPUSDT",
+      "trades": 82,
+      "expectancy_r": -0.1295,
+      "cumulative_net_r": -10.6157,
+      "profit_factor": 0.8294,
+      "win_rate": 0.3171
+    },
+    {
+      "symbol": "UNIUSDT",
+      "trades": 83,
+      "expectancy_r": -0.1436,
+      "cumulative_net_r": -11.9189,
+      "profit_factor": 0.8125,
+      "win_rate": 0.3012
+    },
+    {
+      "symbol": "1000PEPEUSDT",
+      "trades": 84,
+      "expectancy_r": -0.1563,
+      "cumulative_net_r": -13.1271,
+      "profit_factor": 0.794,
+      "win_rate": 0.2976
+    },
+    {
+      "symbol": "TRXUSDT",
+      "trades": 42,
+      "expectancy_r": 0.0678,
+      "cumulative_net_r": 2.8481,
+      "profit_factor": 1.1337,
+      "win_rate": 0.4762
+    }
+  ],
+  "decision": {
+    "passed": false,
+    "checks": {
+      "minimum_total_trades": true,
+      "minimum_profitable_symbols": false,
+      "minimum_aggregate_profit_factor": false,
+      "positive_expectancy_each_window": false,
+      "maximum_single_symbol_profit_share": false
+    },
+    "total_trades": 1765,
+    "aggregate_expectancy_r": -0.1473,
+    "aggregate_profit_factor": 0.7988,
+    "cumulative_net_r": -259.9456,
+    "max_drawdown_r": 344.7419,
+    "profitable_symbols": 4,
+    "largest_positive_symbol_share": 0.3868
+  },
+  "warning": "This is a frozen historical verification, not permission to trade. No parameters were changed after reading these windows."
+}

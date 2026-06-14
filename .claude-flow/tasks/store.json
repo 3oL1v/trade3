@@ -1,0 +1,81 @@
+{
+  "tasks": {
+    "task-1781195450276-2fr1sp": {
+      "taskId": "task-1781195450276-2fr1sp",
+      "type": "review",
+      "description": "Review apps/api public Bybit market-data client and top-20 scanner. Check correctness, stale/open candle handling, absence of trading capabilities, input validation, filtering logic, and missing tests. Do not edit files. Produce concise findings.",
+      "priority": "high",
+      "status": "cancelled",
+      "progress": 0,
+      "assignedTo": [
+        "agent-1781195416961-mzq4rp"
+      ],
+      "tags": [
+        "bybit",
+        "market-data",
+        "review"
+      ],
+      "createdAt": "2026-06-11T16:30:50.276Z",
+      "startedAt": "2026-06-11T16:31:03.720Z",
+      "completedAt": "2026-06-11T16:34:16.340Z",
+      "result": {
+        "cancelReason": "Cancelled by user via CLI"
+      }
+    },
+    "task-1781222391813-p8ou7o": {
+      "taskId": "task-1781222391813-p8ou7o",
+      "type": "research",
+      "description": "Track the bounded overnight Trade3 parameter search; no order execution.",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "trade3",
+        "overnight",
+        "ollama",
+        "offline"
+      ],
+      "createdAt": "2026-06-11T23:59:51.814Z",
+      "startedAt": null,
+      "completedAt": null
+    },
+    "task-1781222506127-eehbl5": {
+      "taskId": "task-1781222506127-eehbl5",
+      "type": "research",
+      "description": "Track the bounded overnight Trade3 parameter search; no order execution.",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "trade3",
+        "overnight",
+        "ollama",
+        "offline"
+      ],
+      "createdAt": "2026-06-12T00:01:46.127Z",
+      "startedAt": null,
+      "completedAt": null
+    },
+    "task-1781222884207-6o4uku": {
+      "taskId": "task-1781222884207-6o4uku",
+      "type": "research",
+      "description": "Track the bounded overnight Trade3 parameter search; no order execution.",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "trade3",
+        "overnight",
+        "ollama",
+        "offline"
+      ],
+      "createdAt": "2026-06-12T00:08:04.208Z",
+      "startedAt": null,
+      "completedAt": null
+    }
+  },
+  "version": "3.0.0"
+}

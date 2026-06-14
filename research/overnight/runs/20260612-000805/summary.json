@@ -1,0 +1,240 @@
+{
+  "status": "completed",
+  "started_at": "2026-06-12 00:08:05.683741+00:00",
+  "completed_at": "2026-06-12 05:54:41.830245+00:00",
+  "trials_completed": 500,
+  "positive_validation_trials": 52,
+  "holdout": [
+    {
+      "rank_before_holdout": 1,
+      "trial": 485,
+      "parameters": {
+        "min_trend_separation_atr": 0.415,
+        "pullback_lookback": 7,
+        "pullback_band_atr": 0.239,
+        "min_stop_atr": 1.138,
+        "min_stop_percent": 0.6,
+        "max_stop_percent": 2.0,
+        "target_r": 2.385,
+        "min_volume_ratio": 1.567,
+        "min_close_strength": 0.578,
+        "stop_buffer_atr": 0.312,
+        "max_modeled_cost_r": 0.1749,
+        "max_hold_hours": 16
+      },
+      "train": {
+        "trades": 148,
+        "expectancy_r": 0.3081,
+        "profit_factor": 1.5185,
+        "cumulative_net_r": 45.5921,
+        "max_drawdown_r": 19.5799,
+        "win_rate": 0.4257,
+        "profitable_symbols": 5
+      },
+      "validation": {
+        "trades": 88,
+        "expectancy_r": 0.1228,
+        "profit_factor": 1.2184,
+        "cumulative_net_r": 10.8058,
+        "max_drawdown_r": 9.5535,
+        "win_rate": 0.4091,
+        "profitable_symbols": 4
+      },
+      "holdout": {
+        "trades": 63,
+        "expectancy_r": 0.323,
+        "profit_factor": 1.5754,
+        "cumulative_net_r": 20.3472,
+        "max_drawdown_r": 7.9377,
+        "win_rate": 0.4444,
+        "profitable_symbols": 4
+      },
+      "holdout_report": "C:\\trade3\\research\\overnight\\runs\\20260612-000805\\holdout-trial-485.json"
+    },
+    {
+      "rank_before_holdout": 2,
+      "trial": 486,
+      "parameters": {
+        "min_trend_separation_atr": 0.415,
+        "pullback_lookback": 7,
+        "pullback_band_atr": 0.239,
+        "min_stop_atr": 1.14,
+        "min_stop_percent": 0.6,
+        "max_stop_percent": 2.0,
+        "target_r": 2.385,
+        "min_volume_ratio": 1.57,
+        "min_close_strength": 0.58,
+        "stop_buffer_atr": 0.31,
+        "max_modeled_cost_r": 0.1746,
+        "max_hold_hours": 16
+      },
+      "train": {
+        "trades": 146,
+        "expectancy_r": 0.3045,
+        "profit_factor": 1.5118,
+        "cumulative_net_r": 44.4518,
+        "max_drawdown_r": 19.5826,
+        "win_rate": 0.4247,
+        "profitable_symbols": 5
+      },
+      "validation": {
+        "trades": 88,
+        "expectancy_r": 0.1228,
+        "profit_factor": 1.2185,
+        "cumulative_net_r": 10.8101,
+        "max_drawdown_r": 9.5543,
+        "win_rate": 0.4091,
+        "profitable_symbols": 4
+      },
+      "holdout": {
+        "trades": 62,
+        "expectancy_r": 0.3472,
+        "profit_factor": 1.6296,
+        "cumulative_net_r": 21.5261,
+        "max_drawdown_r": 6.7604,
+        "win_rate": 0.4516,
+        "profitable_symbols": 4
+      },
+      "holdout_report": "C:\\trade3\\research\\overnight\\runs\\20260612-000805\\holdout-trial-486.json"
+    },
+    {
+      "rank_before_holdout": 3,
+      "trial": 463,
+      "parameters": {
+        "min_trend_separation_atr": 0.415,
+        "pullback_lookback": 6,
+        "pullback_band_atr": 0.24,
+        "min_stop_atr": 1.13,
+        "min_stop_percent": 0.59,
+        "max_stop_percent": 2.0,
+        "target_r": 2.38,
+        "min_volume_ratio": 1.56,
+        "min_close_strength": 0.575,
+        "stop_buffer_atr": 0.31,
+        "max_modeled_cost_r": 0.174,
+        "max_hold_hours": 16
+      },
+      "train": {
+        "trades": 144,
+        "expectancy_r": 0.2852,
+        "profit_factor": 1.4697,
+        "cumulative_net_r": 41.0639,
+        "max_drawdown_r": 18.5495,
+        "win_rate": 0.4167,
+        "profitable_symbols": 5
+      },
+      "validation": {
+        "trades": 88,
+        "expectancy_r": 0.1215,
+        "profit_factor": 1.2161,
+        "cumulative_net_r": 10.6952,
+        "max_drawdown_r": 9.5593,
+        "win_rate": 0.4091,
+        "profitable_symbols": 4
+      },
+      "holdout": {
+        "trades": 61,
+        "expectancy_r": 0.3712,
+        "profit_factor": 1.6851,
+        "cumulative_net_r": 22.6432,
+        "max_drawdown_r": 6.6345,
+        "win_rate": 0.459,
+        "profitable_symbols": 4
+      },
+      "holdout_report": "C:\\trade3\\research\\overnight\\runs\\20260612-000805\\holdout-trial-463.json"
+    },
+    {
+      "rank_before_holdout": 4,
+      "trial": 478,
+      "parameters": {
+        "min_trend_separation_atr": 0.418,
+        "pullback_lookback": 6,
+        "pullback_band_atr": 0.2395,
+        "min_stop_atr": 1.137,
+        "min_stop_percent": 0.592,
+        "max_stop_percent": 2.01,
+        "target_r": 2.385,
+        "min_volume_ratio": 1.564,
+        "min_close_strength": 0.576,
+        "stop_buffer_atr": 0.312,
+        "max_modeled_cost_r": 0.1748,
+        "max_hold_hours": 16
+      },
+      "train": {
+        "trades": 143,
+        "expectancy_r": 0.2971,
+        "profit_factor": 1.4929,
+        "cumulative_net_r": 42.4906,
+        "max_drawdown_r": 19.6584,
+        "win_rate": 0.4196,
+        "profitable_symbols": 5
+      },
+      "validation": {
+        "trades": 88,
+        "expectancy_r": 0.1228,
+        "profit_factor": 1.2184,
+        "cumulative_net_r": 10.8058,
+        "max_drawdown_r": 9.5535,
+        "win_rate": 0.4091,
+        "profitable_symbols": 4
+      },
+      "holdout": {
+        "trades": 59,
+        "expectancy_r": 0.3892,
+        "profit_factor": 1.7182,
+        "cumulative_net_r": 22.9626,
+        "max_drawdown_r": 6.6323,
+        "win_rate": 0.4576,
+        "profitable_symbols": 4
+      },
+      "holdout_report": "C:\\trade3\\research\\overnight\\runs\\20260612-000805\\holdout-trial-478.json"
+    },
+    {
+      "rank_before_holdout": 5,
+      "trial": 476,
+      "parameters": {
+        "min_trend_separation_atr": 0.415,
+        "pullback_lookback": 6,
+        "pullback_band_atr": 0.24,
+        "min_stop_atr": 1.135,
+        "min_stop_percent": 0.5875,
+        "max_stop_percent": 2.0,
+        "target_r": 2.39,
+        "min_volume_ratio": 1.565,
+        "min_close_strength": 0.578,
+        "stop_buffer_atr": 0.31,
+        "max_modeled_cost_r": 0.1745,
+        "max_hold_hours": 16
+      },
+      "train": {
+        "trades": 143,
+        "expectancy_r": 0.2756,
+        "profit_factor": 1.4511,
+        "cumulative_net_r": 39.4158,
+        "max_drawdown_r": 19.7853,
+        "win_rate": 0.4126,
+        "profitable_symbols": 5
+      },
+      "validation": {
+        "trades": 88,
+        "expectancy_r": 0.1241,
+        "profit_factor": 1.2208,
+        "cumulative_net_r": 10.9251,
+        "max_drawdown_r": 9.5493,
+        "win_rate": 0.4091,
+        "profitable_symbols": 4
+      },
+      "holdout": {
+        "trades": 60,
+        "expectancy_r": 0.3974,
+        "profit_factor": 1.7457,
+        "cumulative_net_r": 23.8449,
+        "max_drawdown_r": 6.6345,
+        "win_rate": 0.4667,
+        "profitable_symbols": 4
+      },
+      "holdout_report": "C:\\trade3\\research\\overnight\\runs\\20260612-000805\\holdout-trial-476.json"
+    }
+  ],
+  "warning": "Research output only. Positive historical results are not permission to trade or increase risk."
+}

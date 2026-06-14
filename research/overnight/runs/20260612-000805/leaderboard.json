@@ -1,0 +1,802 @@
+[
+  {
+    "trial": 485,
+    "generated_at": "2026-06-12T05:43:23.468136Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.415,
+      "pullback_lookback": 7,
+      "pullback_band_atr": 0.239,
+      "min_stop_atr": 1.138,
+      "min_stop_percent": 0.6,
+      "max_stop_percent": 2.0,
+      "target_r": 2.385,
+      "min_volume_ratio": 1.567,
+      "min_close_strength": 0.578,
+      "stop_buffer_atr": 0.312,
+      "max_modeled_cost_r": 0.1749,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "Adjusting trial values to introduce minor deviations (e.g., increasing pullback band ATR slightly below the recent mean and raising stop buffer) while retaining core successful parameters from trials like 483/485 that balance trade volume with drawdown control, avoiding exact replication of any prior set.",
+    "critic_note": "The proposed parameters introduce significant overfitting risk by deviating from the high-performing baseline (Trial 478) while ignoring the catastrophic failure of Trial 485 and the structural weaknesses seen in Trials 483/484. Specifically, reducing `pullback_lookback` to 6 narrows signal selection too aggressively compared to the robust lookback=7 settings that generated higher trade counts (140+) without validation collapse. The proposed stop buffer of 0.315 ATR is insufficient given the low",
+    "train": {
+      "trades": 148,
+      "expectancy_r": 0.3081,
+      "profit_factor": 1.5185,
+      "cumulative_net_r": 45.5921,
+      "max_drawdown_r": 19.5799,
+      "win_rate": 0.4257,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 88,
+      "expectancy_r": 0.1228,
+      "profit_factor": 1.2184,
+      "cumulative_net_r": 10.8058,
+      "max_drawdown_r": 9.5535,
+      "win_rate": 0.4091,
+      "profitable_symbols": 4
+    },
+    "research_score": 13.2074
+  },
+  {
+    "trial": 486,
+    "generated_at": "2026-06-12T05:44:06.552253Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.415,
+      "pullback_lookback": 7,
+      "pullback_band_atr": 0.239,
+      "min_stop_atr": 1.14,
+      "min_stop_percent": 0.6,
+      "max_stop_percent": 2.0,
+      "target_r": 2.385,
+      "min_volume_ratio": 1.57,
+      "min_close_strength": 0.58,
+      "stop_buffer_atr": 0.31,
+      "max_modeled_cost_r": 0.1746,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "This proposal introduces subtle but distinct variations from the top-performing recent trials (e.g., Trial 485) to avoid overfitting while preserving robustness. By increasing `min_trend_separation_atr` slightly and adjusting `pullback_band_atr`, we aim to tighten entry confirmation criteria without sacrificing trade frequency (`max_hold_hours` reduced by 1 hour). The rationale is to filter out marginal trend separations that may have caused the negative validation expectancy in Trials 483/484,而",
+    "critic_note": "The proposed parameters introduce a subtle but dangerous drift from the robust baseline (Trial 485). Specifically: 1) Increasing `min_trend_separation_atr` to 0.4175 reduces signal frequency unnecessarily, potentially lowering trade volume without improving edge given that Trial 483/484 failures were driven by overly aggressive stops and weak trend definitions rather than separation thresholds alone. 2) Reducing `max_hold_hours` to 15 contradicts the goal of preserving robustness; longer holds (",
+    "train": {
+      "trades": 146,
+      "expectancy_r": 0.3045,
+      "profit_factor": 1.5118,
+      "cumulative_net_r": 44.4518,
+      "max_drawdown_r": 19.5826,
+      "win_rate": 0.4247,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 88,
+      "expectancy_r": 0.1228,
+      "profit_factor": 1.2185,
+      "cumulative_net_r": 10.8101,
+      "max_drawdown_r": 9.5543,
+      "win_rate": 0.4091,
+      "profitable_symbols": 4
+    },
+    "research_score": 13.1867
+  },
+  {
+    "trial": 463,
+    "generated_at": "2026-06-12T05:27:40.591770Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.415,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.24,
+      "min_stop_atr": 1.13,
+      "min_stop_percent": 0.59,
+      "max_stop_percent": 2.0,
+      "target_r": 2.38,
+      "min_volume_ratio": 1.56,
+      "min_close_strength": 0.575,
+      "stop_buffer_atr": 0.31,
+      "max_modeled_cost_r": 0.174,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "This proposal introduces a slight increase in trend separation (to reduce premature reversals) while decreasing pullback lookback and band width to tighten entry timing closer to trial 462's success but avoiding its overfitting risk. The stop loss parameters are slightly tightened on the ATR side, widened minimally on the percent side, and target is marginally increased for improved reward-to-risk profile without sacrificing win rate observed in trials like 456.",
+    "critic_note": "The proposed parameters introduce a slight increase in trend separation (to 0.425) and tighten the pullback band width to 0.238 ATR while reducing lookback to 6 periods. This combination mirrors Trial 462's configuration but attempts to optimize it further based on perceived 'premature reversal' risks from earlier trials.\n\nHowever, a review of prior trials reveals significant overfitting signals in this direction:\n1. **Validation Collapse**: Trials with similar or slightly tighter parameters (eT",
+    "train": {
+      "trades": 144,
+      "expectancy_r": 0.2852,
+      "profit_factor": 1.4697,
+      "cumulative_net_r": 41.0639,
+      "max_drawdown_r": 18.5495,
+      "win_rate": 0.4167,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 88,
+      "expectancy_r": 0.1215,
+      "profit_factor": 1.2161,
+      "cumulative_net_r": 10.6952,
+      "max_drawdown_r": 9.5593,
+      "win_rate": 0.4091,
+      "profitable_symbols": 4
+    },
+    "research_score": 13.1802
+  },
+  {
+    "trial": 478,
+    "generated_at": "2026-06-12T05:38:34.536596Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.418,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.2395,
+      "min_stop_atr": 1.137,
+      "min_stop_percent": 0.592,
+      "max_stop_percent": 2.01,
+      "target_r": 2.385,
+      "min_volume_ratio": 1.564,
+      "min_close_strength": 0.576,
+      "stop_buffer_atr": 0.312,
+      "max_modeled_cost_r": 0.1748,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "This proposal introduces minor but distinct diversification from the top-performing recent trials (463/476) by adjusting key thresholds to avoid exact parameter repetition while targeting similar robustness metrics. Specifically, increasing `pullback_band_atr` slightly tightens entry confirmation relative to volatility, raising `min_stop_percent` and lowering `max_modeled_cost_r` marginally to potentially improve the risk-reward precision without altering the core trend separation logic (0.415–0",
+    "critic_note": "The proposed parameters exhibit significant overfitting risks and lack diversity from the top-performing trials (463/476). Specifically: 1) The `pullback_band_atr` is nearly identical to Trial 463, offering no structural change. 2) Adjusting `min_stop_percent` slightly higher while keeping other constraints tight creates a narrow parameter space that likely captures noise rather than robustness. 3) There is insufficient divergence from the successful baseline (0.59/1.748 vs proposed 0.592/0.1748",
+    "train": {
+      "trades": 143,
+      "expectancy_r": 0.2971,
+      "profit_factor": 1.4929,
+      "cumulative_net_r": 42.4906,
+      "max_drawdown_r": 19.6584,
+      "win_rate": 0.4196,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 88,
+      "expectancy_r": 0.1228,
+      "profit_factor": 1.2184,
+      "cumulative_net_r": 10.8058,
+      "max_drawdown_r": 9.5535,
+      "win_rate": 0.4091,
+      "profitable_symbols": 4
+    },
+    "research_score": 13.1109
+  },
+  {
+    "trial": 476,
+    "generated_at": "2026-06-12T05:37:05.829477Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.415,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.24,
+      "min_stop_atr": 1.135,
+      "min_stop_percent": 0.5875,
+      "max_stop_percent": 2.0,
+      "target_r": 2.39,
+      "min_volume_ratio": 1.565,
+      "min_close_strength": 0.578,
+      "stop_buffer_atr": 0.31,
+      "max_modeled_cost_r": 0.1745,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "Trial history shows consistent validation failover (expectancy near zero or negative) when pullback_lookback increases to 7+ and stop conditions tighten significantly; shifting back to lookback=6 stabilizes the entry filter. To improve robustness against overfitting seen in recent trials, I am perturbing all numeric parameters with small incremental deltas (+0.1% to +0.5%) around previous successful clusters (e.g., min_stop_percent 0.575-0.59) and increasing max_hold_hours slightly beyond the 16",
+    "critic_note": "The proposed parameters introduce significant overfitting risk by perturbing values around a cluster that already showed validation failure (Trial 463). The rationale cites 'consistent validation failover' when pullback_lookback increases, yet the proposal retains lookback=6 while increasing max_hold_hours to 17 without addressing the root cause of negative expectancy in Trials 450/463 where hold time was already capped at 16. Increasing exposure duration (max_hold) on a strategy with near-zero/",
+    "train": {
+      "trades": 143,
+      "expectancy_r": 0.2756,
+      "profit_factor": 1.4511,
+      "cumulative_net_r": 39.4158,
+      "max_drawdown_r": 19.7853,
+      "win_rate": 0.4126,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 88,
+      "expectancy_r": 0.1241,
+      "profit_factor": 1.2208,
+      "cumulative_net_r": 10.9251,
+      "max_drawdown_r": 9.5493,
+      "win_rate": 0.4091,
+      "profitable_symbols": 4
+    },
+    "research_score": 13.0921
+  },
+  {
+    "trial": 490,
+    "generated_at": "2026-06-12T05:46:59.723137Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.418,
+      "pullback_lookback": 7,
+      "pullback_band_atr": 0.2395,
+      "min_stop_atr": 1.14,
+      "min_stop_percent": 0.6,
+      "max_stop_percent": 2.0,
+      "target_r": 2.385,
+      "min_volume_ratio": 1.57,
+      "min_close_strength": 0.579,
+      "stop_buffer_atr": 0.312,
+      "max_modeled_cost_r": 0.175,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "Moving away from the cluster around min_trend_separation=0.41 and increasing pullback_lookback to 8 aims to capture slightly later trend confirmations while tightening entry filters with a higher volume ratio (1.58) and lower close strength threshold (0.574). Increasing max_stop_percent marginally targets more favorable risk-to-reward profiles without violating constraints, balancing the aggressive parameters of trial 489 against the stable but underperforming valuations of trials 485-486.",
+    "critic_note": "The proposed parameters introduce significant overfitting risks by deviating from the high-performing cluster (Trials 485-486) while attempting to mimic aggressive settings that failed in Trial 489. Specifically: \n\n1. **Overfitting on Separation**: The proposal increases `min_trend_separation_atr` to 0.395, moving away from the robust ~0.41-0.42 range found in successful trials (463-478). This reduction likely captures noise rather than true trend separation.\n\n2. **Unrealistic Pullback Dynamics:",
+    "train": {
+      "trades": 144,
+      "expectancy_r": 0.3242,
+      "profit_factor": 1.5522,
+      "cumulative_net_r": 46.6808,
+      "max_drawdown_r": 20.7281,
+      "win_rate": 0.4306,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 88,
+      "expectancy_r": 0.1228,
+      "profit_factor": 1.2184,
+      "cumulative_net_r": 10.8058,
+      "max_drawdown_r": 9.5535,
+      "win_rate": 0.4091,
+      "profitable_symbols": 4
+    },
+    "research_score": 13.0214
+  },
+  {
+    "trial": 498,
+    "generated_at": "2026-06-12T05:52:36.213071Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.418,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.24,
+      "min_stop_atr": 1.135,
+      "min_stop_percent": 0.59,
+      "max_stop_percent": 2.0,
+      "target_r": 2.385,
+      "min_volume_ratio": 1.567,
+      "min_close_strength": 0.578,
+      "stop_buffer_atr": 0.314,
+      "max_modeled_cost_r": 0.175,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "This proposal adjusts pullback_lookback to 8 (from the common 6-7) while incrementing min_stop_atr slightly above Trial 495/496 levels but keeping it below Trial 494's aggressive stop. The target_r is nudged upward from 2.38, and volume_ratio/trend separation are tightened to filter for stronger momentum entries without overfitting the high-win-rate shortfalls seen in Trials 495-497 on validation.",
+    "critic_note": "The proposed parameters exhibit signs of overfitting by attempting to fine-tune a high-win-rate shortfall seen in Trials 495-497 rather than addressing the structural fragility exposed in Trial 494. Increasing pullback_lookback to 8 increases noise exposure without improving validation expectancy compared to lookbacks of 6 or 7 (Trials 485, 486). The rationale's claim that tighter volume/trend filters will fix high-win-rate shortfalls is unfounded; the root cause in recent trials was likely an '",
+    "train": {
+      "trades": 142,
+      "expectancy_r": 0.2835,
+      "profit_factor": 1.467,
+      "cumulative_net_r": 40.2524,
+      "max_drawdown_r": 22.1236,
+      "win_rate": 0.4155,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 88,
+      "expectancy_r": 0.1228,
+      "profit_factor": 1.2184,
+      "cumulative_net_r": 10.8059,
+      "max_drawdown_r": 9.5522,
+      "win_rate": 0.4091,
+      "profitable_symbols": 4
+    },
+    "research_score": 12.4173
+  },
+  {
+    "trial": 496,
+    "generated_at": "2026-06-12T05:51:11.215227Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.418,
+      "pullback_lookback": 7,
+      "pullback_band_atr": 0.2395,
+      "min_stop_atr": 1.16,
+      "min_stop_percent": 0.62,
+      "max_stop_percent": 2.05,
+      "target_r": 2.4,
+      "min_volume_ratio": 1.58,
+      "min_close_strength": 0.59,
+      "stop_buffer_atr": 0.32,
+      "max_modeled_cost_r": 0.176,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "This proposal attempts a fine-grained perturbation of Trial 490 (the best recent performer with score ~13) rather than the risky shifts seen in Trials 492-495. By increasing `min_stop_atr` slightly to tighten entry discipline while raising `min_close_strength` and adjusting volume ratios, we aim to improve validation stability without sacrificing trade count or expecting a drastic change that could lead to overfitting on this specific dataset.",
+    "critic_note": "The proposed parameters are overly conservative compared to the high-performing baseline (Trial 485/490) and dangerously close to the overfitting regime seen in Trials 492-495. Specifically: 1) Increasing `min_stop_atr` from ~1.14 to 1.16 reduces trade frequency without a clear validation benefit, potentially lowering signal count below viable levels; 2) Raising `target_r` and tightening volume/strength thresholds mimics the pattern of Trials 493-495 which showed collapsing validation expectancy",
+    "train": {
+      "trades": 144,
+      "expectancy_r": 0.3687,
+      "profit_factor": 1.6436,
+      "cumulative_net_r": 53.0946,
+      "max_drawdown_r": 18.3277,
+      "win_rate": 0.4444,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 88,
+      "expectancy_r": 0.1112,
+      "profit_factor": 1.2008,
+      "cumulative_net_r": 9.7862,
+      "max_drawdown_r": 11.6213,
+      "win_rate": 0.4091,
+      "profitable_symbols": 5
+    },
+    "research_score": 12.1659
+  },
+  {
+    "trial": 456,
+    "generated_at": "2026-06-12T05:22:39.067405Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.41,
+      "pullback_lookback": 7,
+      "pullback_band_atr": 0.24,
+      "min_stop_atr": 1.15,
+      "min_stop_percent": 0.61,
+      "max_stop_percent": 2.0,
+      "target_r": 2.38,
+      "min_volume_ratio": 1.57,
+      "min_close_strength": 0.575,
+      "stop_buffer_atr": 0.31,
+      "max_modeled_cost_r": 0.176,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "This proposal attempts to refine the high-performing cluster (Trials 432-455) by slightly increasing trend separation and pullback lookback to filter weaker moves while maintaining a tight stop-to-trail ratio. It avoids exact replication of Trial 450/445 by shifting the volume threshold and cost modeling, aiming for robust training statistics without pushing into the high-loss regimes seen in Trials 453-454.",
+    "critic_note": "The proposed parameters introduce significant overfitting risks by increasing `min_trend_separation_atr` to 0.42 (vs ~0.39-0.41 in high-scoring trials) while simultaneously tightening the stop range (`max_stop_percent`: 1.98 vs 2.0). This creates a narrow, non-representative filter that likely excludes valid trend continuations seen in Trials 453/454 but fails to generalize on validation data (as evidenced by negative expectancy shifts when separation is increased beyond ~0.415). Additionally, `",
+    "train": {
+      "trades": 148,
+      "expectancy_r": 0.3284,
+      "profit_factor": 1.5596,
+      "cumulative_net_r": 48.5977,
+      "max_drawdown_r": 17.1665,
+      "win_rate": 0.4324,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 90,
+      "expectancy_r": 0.1019,
+      "profit_factor": 1.1799,
+      "cumulative_net_r": 9.1729,
+      "max_drawdown_r": 10.5071,
+      "win_rate": 0.4,
+      "profitable_symbols": 4
+    },
+    "research_score": 11.4901
+  },
+  {
+    "trial": 481,
+    "generated_at": "2026-06-12T05:40:42.622653Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.415,
+      "pullback_lookback": 7,
+      "pullback_band_atr": 0.238,
+      "min_stop_atr": 1.139,
+      "min_stop_percent": 0.59,
+      "max_stop_percent": 2.0,
+      "target_r": 2.4,
+      "min_volume_ratio": 1.567,
+      "min_close_strength": 0.58,
+      "stop_buffer_atr": 0.31,
+      "max_modeled_cost_r": 0.1749,
+      "max_hold_hours": 17
+    },
+    "proposer_note": "Shifts pullback lookback from 6 to 7 and max hold hours slightly up (to 17) while keeping separation tight (~0.4165), aiming to filter noisier setups found in trials like 480/479 which had lower validation expectancy despite decent training metrics, yet avoids the overfitting seen when increasing stop requirements drastically as in trial 477.",
+    "critic_note": "The proposed parameters show a slight increase in pullback lookback (6->7) and hold time but retain the tight separation (~0.42). However, Trial 480 (score ~7.5) with similar settings failed validation due to low expectancy (0.08r), suggesting that increasing lookback without relaxing stop constraints or reducing cost assumptions is insufficient to overcome noise. The rationale claims avoiding 'overfitting seen in trial 477', yet the parameters are nearly identical to Trial 480's failure mode, a",
+    "train": {
+      "trades": 146,
+      "expectancy_r": 0.3531,
+      "profit_factor": 1.6139,
+      "cumulative_net_r": 51.5563,
+      "max_drawdown_r": 18.2966,
+      "win_rate": 0.4384,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 88,
+      "expectancy_r": 0.0976,
+      "profit_factor": 1.1706,
+      "cumulative_net_r": 8.587,
+      "max_drawdown_r": 12.303,
+      "win_rate": 0.4205,
+      "profitable_symbols": 4
+    },
+    "research_score": 10.4636
+  },
+  {
+    "trial": 482,
+    "generated_at": "2026-06-12T05:41:25.912071Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.4165,
+      "pullback_lookback": 7,
+      "pullback_band_atr": 0.239,
+      "min_stop_atr": 1.138,
+      "min_stop_percent": 0.59,
+      "max_stop_percent": 2.0,
+      "target_r": 2.4,
+      "min_volume_ratio": 1.567,
+      "min_close_strength": 0.578,
+      "stop_buffer_atr": 0.312,
+      "max_modeled_cost_r": 0.175,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "This proposal introduces controlled perturbation to avoid overfitting the cluster of recent high-performing trials (456-480) while addressing validation gaps in Trial 479 and 480. The target return is slightly increased from 2.38–2.40 to 2.41 with a corresponding reduction in min_stop_percent, aiming for tighter risk management without widening stop distances (keeping them near ~1.136 ATR). Validation expectancy was notably low (~0.079) or negative in similar trials; this adjustment raises the '",
+    "critic_note": "The proposed parameters suffer from three critical flaws: (1) **Overfitting to recent noise**: The `min_trend_separation_atr` and `pullback_band_atr` are tuned too closely to the specific values of trials 478-480, ignoring the robustness seen in Trial 456 (`lookback=7`, higher separation). (2) **Validation failure risk**: Trials with similar parameters but slightly different lookbacks or volume ratios show validation expectancy collapsing from ~0.12 to near zero/negative when `target_r` exceeds ",
+    "train": {
+      "trades": 145,
+      "expectancy_r": 0.3203,
+      "profit_factor": 1.5424,
+      "cumulative_net_r": 46.4492,
+      "max_drawdown_r": 20.5699,
+      "win_rate": 0.4276,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 88,
+      "expectancy_r": 0.103,
+      "profit_factor": 1.1832,
+      "cumulative_net_r": 9.0655,
+      "max_drawdown_r": 11.6236,
+      "win_rate": 0.4091,
+      "profitable_symbols": 4
+    },
+    "research_score": 10.4284
+  },
+  {
+    "trial": 432,
+    "generated_at": "2026-06-12T05:05:38.046115Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.385,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.24,
+      "min_stop_atr": 1.12,
+      "min_stop_percent": 0.59,
+      "max_stop_percent": 2.0,
+      "target_r": 2.38,
+      "min_volume_ratio": 1.56,
+      "min_close_strength": 0.575,
+      "stop_buffer_atr": 0.3,
+      "max_modeled_cost_r": 0.175,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "Diversifying pullback_lookback to 7 (up from common 6-7) and raising stop_buffer_atr slightly above trial averages targets tighter entry precision without increasing risk exposure given similar min_stop_atr. Increasing max_modeled_cost_r cap reduction improves expectancy efficiency while lengthening hold_time marginally past standard 16h explores non-overnight setups in trending assets that benefit from extended horizon, avoiding overfitting by deviating from the majority of recent successful/br",
+    "critic_note": "The proposed parameters introduce significant overfitting risks by deviating from the high-performing baseline (Trial 401) without addressing validation degradation seen in similar deviations (e.g., Trial 429). Increasing `pullback_lookback` to 7 and extending hold time beyond 16h correlates with negative expectancy in recent trials when combined with aggressive cost caps. The rationale claims 'tighter entry precision' but the proposed parameters are nearly identical to a lower-scoring trial (40",
+    "train": {
+      "trades": 146,
+      "expectancy_r": 0.2708,
+      "profit_factor": 1.4415,
+      "cumulative_net_r": 39.5431,
+      "max_drawdown_r": 22.3348,
+      "win_rate": 0.411,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 89,
+      "expectancy_r": 0.1056,
+      "profit_factor": 1.1855,
+      "cumulative_net_r": 9.3976,
+      "max_drawdown_r": 10.4993,
+      "win_rate": 0.4045,
+      "profitable_symbols": 4
+    },
+    "research_score": 10.2325
+  },
+  {
+    "trial": 450,
+    "generated_at": "2026-06-12T05:18:24.637253Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.415,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.238,
+      "min_stop_atr": 1.14,
+      "min_stop_percent": 0.6,
+      "max_stop_percent": 2.0,
+      "target_r": 2.4,
+      "min_volume_ratio": 1.57,
+      "min_close_strength": 0.58,
+      "stop_buffer_atr": 0.31,
+      "max_modeled_cost_r": 0.176,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "This proposal introduces a slight upward shift in ATR-based thresholds (min_trend_separation and min_stop) to filter for stronger momentum while maintaining the consistent pullback structure seen in successful trials like 432. The max_modeled_cost_r is nudged higher (0.182 vs ~0.175-0.178 range) to allow slightly more cost tolerance, potentially broadening trade capture without sacrificing edge, given our recent ability to handle costs up to this level in positive trials. We retain the 6-periods",
+    "critic_note": "The proposed parameters exhibit signs of overfitting and lack diversity relative to the high-performing baseline (Trial 432). The upward shift in `min_trend_separation_atr` (to 0.425) combined with a higher cost tolerance (`max_modeled_cost_r`: 0.182 vs ~0.176) creates an unrealistic risk-reward profile that likely fails to generalize, as seen in Trials 449 and 447 where similar aggressive settings led to negative validation expectancy despite strong train scores. The rationale's claim of 'broad",
+    "train": {
+      "trades": 144,
+      "expectancy_r": 0.2925,
+      "profit_factor": 1.4817,
+      "cumulative_net_r": 42.1229,
+      "max_drawdown_r": 20.8267,
+      "win_rate": 0.4167,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 90,
+      "expectancy_r": 0.0839,
+      "profit_factor": 1.148,
+      "cumulative_net_r": 7.5476,
+      "max_drawdown_r": 11.6245,
+      "win_rate": 0.4,
+      "profitable_symbols": 4
+    },
+    "research_score": 8.1663
+  },
+  {
+    "trial": 440,
+    "generated_at": "2026-06-12T05:11:17.536357Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.395,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.242,
+      "min_stop_atr": 1.118,
+      "min_stop_percent": 0.578,
+      "max_stop_percent": 2.03,
+      "target_r": 2.36,
+      "min_volume_ratio": 1.545,
+      "min_close_strength": 0.568,
+      "stop_buffer_atr": 0.295,
+      "max_modeled_cost_r": 0.172,
+      "max_hold_hours": 17
+    },
+    "proposer_note": "This proposal introduces subtle deviations from the top-performing Trial 432 (score: 10.2) and avoids exact duplication while maintaining robust trade volume targets (~140+ trains). By slightly lowering `min_stop_percent` (0.578 vs 0.59), increasing `max_hold_hours` to 17, and adjusting `target_r` down to 2.36, the strategy aims to capture more entries with a marginally wider stop range without sacrificing risk control. These adjustments target higher trade frequency in validation while keepingA",
+    "critic_note": "The proposed parameters are highly similar to Trial 432 (score: 10.2), differing by less than 2% on key metrics like `min_stop_percent` and `target_r`. This lack of diversity increases the risk of overfitting or simply repeating a known configuration without adding new insights. The rationale claims these are 'subtle deviations,' but in futures strategy research, such minor tweaks often fail to capture distinct market regimes found in other trials (e.g., Trial 438's aggressive pullback vs. low A",
+    "train": {
+      "trades": 146,
+      "expectancy_r": 0.3037,
+      "profit_factor": 1.5096,
+      "cumulative_net_r": 44.3358,
+      "max_drawdown_r": 20.7507,
+      "win_rate": 0.4315,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 90,
+      "expectancy_r": 0.0827,
+      "profit_factor": 1.1409,
+      "cumulative_net_r": 7.4419,
+      "max_drawdown_r": 12.4162,
+      "win_rate": 0.4111,
+      "profitable_symbols": 4
+    },
+    "research_score": 7.9298
+  },
+  {
+    "trial": 464,
+    "generated_at": "2026-06-12T05:28:24.641588Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.415,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.238,
+      "min_stop_atr": 1.14,
+      "min_stop_percent": 0.59,
+      "max_stop_percent": 2.0,
+      "target_r": 2.4,
+      "min_volume_ratio": 1.6,
+      "min_close_strength": 0.58,
+      "stop_buffer_atr": 0.31,
+      "max_modeled_cost_r": 0.175,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "Trial 463 showed strong train expectancy but moderate validation performance; this proposal widens the target R to 2.45 and increases min stop ATR slightly (from 1.13/1.15) while reducing max hold hours from 16 to 15. The tighter pullback band_atr (0.235 vs 0.238-0.24) combined with higher volume_ratio and close_strength aims to filter for more decisive setups, potentially improving the validation-to-training expectancy ratio seen in previous high-scoring trials like 462.",
+    "critic_note": "The proposed parameters introduce significant overfitting risk by increasing the target R to 2.45 while simultaneously tightening entry filters (higher volume/strength) and holding periods without adjusting for increased transaction costs or reduced trade frequency. Trial 463 already showed a validation-to-training expectancy ratio of ~0.43; raising targets further on such an underperforming set is likely to result in negative validation scores, as seen in Trials 461 and 462 where aggressive R-2",
+    "train": {
+      "trades": 142,
+      "expectancy_r": 0.2881,
+      "profit_factor": 1.4738,
+      "cumulative_net_r": 40.9099,
+      "max_drawdown_r": 19.721,
+      "win_rate": 0.4155,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 87,
+      "expectancy_r": 0.0777,
+      "profit_factor": 1.1365,
+      "cumulative_net_r": 6.7593,
+      "max_drawdown_r": 11.6245,
+      "win_rate": 0.4023,
+      "profitable_symbols": 3
+    },
+    "research_score": 7.7645
+  },
+  {
+    "trial": 445,
+    "generated_at": "2026-06-12T05:14:48.828890Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.41,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.238,
+      "min_stop_atr": 1.15,
+      "min_stop_percent": 0.62,
+      "max_stop_percent": 1.98,
+      "target_r": 2.42,
+      "min_volume_ratio": 1.57,
+      "min_close_strength": 0.578,
+      "stop_buffer_atr": 0.31,
+      "max_modeled_cost_r": 0.178,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "Shifts pullback lookback to 7 and tightens the band (ATR) slightly while increasing stop distance by ATR to filter out low-quality setups, aiming for higher expectancy in training; target R increased to 2.45 with a lower max hold time of 15h to reduce rollover risk on invalidating trades.",
+    "critic_note": "The proposed parameters suffer from overfitting risks and lack diversity compared to prior successful trials (e.g., Trial 432). Increasing pullback lookback to 7 while tightening the band slightly reduces signal frequency too aggressively without a corresponding increase in trend separation, leading to potential data scarcity. The stop distance is increased by ATR but lacks correlation with volume strength filters seen in high-performing recent trials. To improve robustness and reduce overfit, I",
+    "train": {
+      "trades": 145,
+      "expectancy_r": 0.3215,
+      "profit_factor": 1.5402,
+      "cumulative_net_r": 46.62,
+      "max_drawdown_r": 15.0539,
+      "win_rate": 0.4276,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 89,
+      "expectancy_r": 0.0634,
+      "profit_factor": 1.1105,
+      "cumulative_net_r": 5.64,
+      "max_drawdown_r": 11.6245,
+      "win_rate": 0.3933,
+      "profitable_symbols": 3
+    },
+    "research_score": 7.6225
+  },
+  {
+    "trial": 480,
+    "generated_at": "2026-06-12T05:40:00.571191Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.415,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.238,
+      "min_stop_atr": 1.137,
+      "min_stop_percent": 0.591,
+      "max_stop_percent": 2.01,
+      "target_r": 2.4,
+      "min_volume_ratio": 1.563,
+      "min_close_strength": 0.576,
+      "stop_buffer_atr": 0.318,
+      "max_modeled_cost_r": 0.1745,
+      "max_hold_hours": 15
+    },
+    "proposer_note": "This proposal introduces micro-variations to Trial 469's high-performing core while tightening risk constraints based on recent failures (Trials 477/479). The `pullback_band_atr` is narrowed slightly (`0.237`) and `stop_buffer_atr` widened marginally (`0.315`) to increase safety without reducing trade count, given the robust train performance of nearby trials (~16 net R with low drawdown). Crucially, `max_hold_hours` was reduced from 16 to 14 to filter out late-day volatility risks that often er",
+    "critic_note": "The proposed parameters introduce a subtle but dangerous overfitting risk by narrowing the pullback band to exactly match Trial 469's high-performing settings while simultaneously tightening stop constraints based on recent failures (Trials 477/479). The rationale claims 'micro-variations' are sufficient, yet reducing `max_hold_hours` from 16 to 14 without adjusting for the specific volatility regime of late-day sessions risks creating a parameter set that only works because it excludes bad data",
+    "train": {
+      "trades": 146,
+      "expectancy_r": 0.2728,
+      "profit_factor": 1.4444,
+      "cumulative_net_r": 39.8296,
+      "max_drawdown_r": 21.0153,
+      "win_rate": 0.411,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 87,
+      "expectancy_r": 0.0791,
+      "profit_factor": 1.1376,
+      "cumulative_net_r": 6.8774,
+      "max_drawdown_r": 11.302,
+      "win_rate": 0.4138,
+      "profitable_symbols": 2
+    },
+    "research_score": 7.5767
+  },
+  {
+    "trial": 401,
+    "generated_at": "2026-06-12T04:43:29.459148Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.415,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.238,
+      "min_stop_atr": 1.12,
+      "min_stop_percent": 0.59,
+      "max_stop_percent": 2.0,
+      "target_r": 2.4,
+      "min_volume_ratio": 1.56,
+      "min_close_strength": 0.575,
+      "stop_buffer_atr": 0.3,
+      "max_modeled_cost_r": 0.18,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "This proposal introduces a slight reduction in the pullback lookback (from 6 to 5) and band ATR to shorten setup latency while maintaining strict entry quality via increased min_close_strength (to 0.59). The stop parameters are loosened slightly on both sides to improve trade frequency, offset by raising the target R to 2.42 for better risk/reward granularity. Crucially, max_modeled_cost_r is lowered to 0.16 and hold time extended marginally (to 18h) to reduce slippage/overnight risks compared -",
+    "critic_note": "The proposed parameters introduce significant overfitting risks by reducing the pullback lookback to 5 and tightening close strength thresholds without corresponding adjustments in stop definitions or cost modeling. Trial 397 (score -15) demonstrates that a similar 'lookback=5' configuration with aggressive filtering leads to negative expectancy on validation data, suggesting these specific parameter shifts capture noise rather than signal diversity. The proposed reduction in max_modeled_cost_r(",
+    "train": {
+      "trades": 149,
+      "expectancy_r": 0.3168,
+      "profit_factor": 1.5262,
+      "cumulative_net_r": 47.2031,
+      "max_drawdown_r": 18.8736,
+      "win_rate": 0.4228,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 91,
+      "expectancy_r": 0.0692,
+      "profit_factor": 1.1204,
+      "cumulative_net_r": 6.2937,
+      "max_drawdown_r": 11.9483,
+      "win_rate": 0.3956,
+      "profitable_symbols": 4
+    },
+    "research_score": 7.1543
+  },
+  {
+    "trial": 412,
+    "generated_at": "2026-06-12T04:51:11.233700Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.415,
+      "pullback_lookback": 6,
+      "pullback_band_atr": 0.238,
+      "min_stop_atr": 1.12,
+      "min_stop_percent": 0.59,
+      "max_stop_percent": 2.0,
+      "target_r": 2.4,
+      "min_volume_ratio": 1.6,
+      "min_close_strength": 0.58,
+      "stop_buffer_atr": 0.3,
+      "max_modeled_cost_r": 0.175,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "Trial 410 showed strong train expectancy but poor validation; increasing `min_stop_atr` to 1.09 tightens the stop relative to volatility while slightly widening the range via adjusted percentiles (`5.7%`, `2.05%`) and raising volume requirements to 1.61 to filter noisier entries, aiming for better risk-adjusted robustness.",
+    "critic_note": "The proposed parameters for Trial 412 (implied) exhibit significant overfitting risks and lack of diversity compared to the prior successful baseline (Trial 408/410). Specifically: 1) The `min_stop_atr` increase from ~1.12 to 1.09 is inconsistent with volatility tightening logic; Trial 410 showed that a tighter stop relative to ATR combined with higher volume filters noise better than the proposed relaxation. 2) Raising `max_hold_hours` to 17 without adjusting for increased slippage or spread in",
+    "train": {
+      "trades": 143,
+      "expectancy_r": 0.2601,
+      "profit_factor": 1.4204,
+      "cumulative_net_r": 37.1928,
+      "max_drawdown_r": 23.5013,
+      "win_rate": 0.4056,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 87,
+      "expectancy_r": 0.0774,
+      "profit_factor": 1.1359,
+      "cumulative_net_r": 6.7371,
+      "max_drawdown_r": 11.6319,
+      "win_rate": 0.4023,
+      "profitable_symbols": 3
+    },
+    "research_score": 6.6256
+  },
+  {
+    "trial": 408,
+    "generated_at": "2026-06-12T04:48:21.642539Z",
+    "source": "ollama_proposer_critic",
+    "parameters": {
+      "min_trend_separation_atr": 0.385,
+      "pullback_lookback": 7,
+      "pullback_band_atr": 0.24,
+      "min_stop_atr": 1.15,
+      "min_stop_percent": 0.6,
+      "max_stop_percent": 2.1,
+      "target_r": 2.38,
+      "min_volume_ratio": 1.52,
+      "min_close_strength": 0.57,
+      "stop_buffer_atr": 0.29,
+      "max_modeled_cost_r": 0.165,
+      "max_hold_hours": 16
+    },
+    "proposer_note": "Trial 408 seeks to diverge from the high-success patterns of Trials 278–352 while avoiding the overfitting that plagued later attempts like 406 and 407. By increasing `pullback_lookback` to 8, we filter for stronger trend confirmations similar to trial 395 but with tighter volume requirements (`min_volume_ratio`: 1.48) rather than aggressive stops. The stop distance is widened slightly in ATR terms (1.3 vs 0.42–0.5 range seen elsewhere) while keeping entry criteria standard, aiming for the ~7-10",
+    "critic_note": "The proposed parameters in Trial 408 exhibit significant signs of overfitting and lack diversity from the high-performing baseline (Trial 395) while introducing risky constraints that likely degrade out-of-sample performance. \n\n1. **Overfitting Risk**: The `pullback_lookback` is increased to 8, which narrows the signal space significantly compared to the successful range of 6–7 seen in Trials 278 and 395. Combined with a very specific `min_volume_ratio` (1.48) that sits between Trial 395's 1.55/",
+    "train": {
+      "trades": 148,
+      "expectancy_r": 0.2587,
+      "profit_factor": 1.4316,
+      "cumulative_net_r": 38.2949,
+      "max_drawdown_r": 22.8972,
+      "win_rate": 0.4257,
+      "profitable_symbols": 5
+    },
+    "validation": {
+      "trades": 89,
+      "expectancy_r": 0.0835,
+      "profit_factor": 1.1466,
+      "cumulative_net_r": 7.4303,
+      "max_drawdown_r": 16.525,
+      "win_rate": 0.3933,
+      "profitable_symbols": 4
+    },
+    "research_score": 6.229
+  }
+]

@@ -1,0 +1,128 @@
+{
+  "generated_at": "2026-06-11T23:57:55.705960Z",
+  "strategy": "trend_continuation_v2",
+  "execution_policy": "next_5m_open_2r_or_stop_v2",
+  "symbols": [
+    "BTCUSDT"
+  ],
+  "start": "2026-06-07T00:00:00Z",
+  "end": "2026-06-10T00:00:00Z",
+  "warmup_days": 4,
+  "spread_bps": 1.0,
+  "taker_fee_rate_pct": 0.055,
+  "slippage_bps": 2.0,
+  "total_recorded_signals": 3,
+  "resolved_trades": 2,
+  "censored_signals": 1,
+  "ambiguous_signals": 0,
+  "skipped_signals": 0,
+  "gross_expectancy_r": -1.0,
+  "net_expectancy_r": -1.1288,
+  "average_fee_cost_r": 0.0945,
+  "average_slippage_cost_r": 0.0344,
+  "average_total_cost_r": 0.1288,
+  "overall": {
+    "label": "all",
+    "trades": 2,
+    "wins": 0,
+    "losses": 2,
+    "win_rate": 0.0,
+    "expectancy_r": -1.1288,
+    "profit_factor": null,
+    "cumulative_net_r": -2.2577,
+    "max_drawdown_r": 2.2577
+  },
+  "score_buckets": [
+    {
+      "label": "70-79.99",
+      "trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": null,
+      "expectancy_r": null,
+      "profit_factor": null,
+      "cumulative_net_r": null,
+      "max_drawdown_r": null
+    },
+    {
+      "label": "80-89.99",
+      "trades": 1,
+      "wins": 0,
+      "losses": 1,
+      "win_rate": 0.0,
+      "expectancy_r": -1.1103,
+      "profit_factor": null,
+      "cumulative_net_r": -1.1103,
+      "max_drawdown_r": 1.1103
+    },
+    {
+      "label": "90-100",
+      "trades": 1,
+      "wins": 0,
+      "losses": 1,
+      "win_rate": 0.0,
+      "expectancy_r": -1.1473,
+      "profit_factor": null,
+      "cumulative_net_r": -1.1473,
+      "max_drawdown_r": 1.1473
+    }
+  ],
+  "directions": [
+    {
+      "label": "long",
+      "trades": 2,
+      "wins": 0,
+      "losses": 2,
+      "win_rate": 0.0,
+      "expectancy_r": -1.1288,
+      "profit_factor": null,
+      "cumulative_net_r": -2.2577,
+      "max_drawdown_r": 2.2577
+    },
+    {
+      "label": "short",
+      "trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": null,
+      "expectancy_r": null,
+      "profit_factor": null,
+      "cumulative_net_r": null,
+      "max_drawdown_r": null
+    }
+  ],
+  "trades": [
+    {
+      "symbol": "BTCUSDT",
+      "direction": "long",
+      "score": 92.95,
+      "signal_at": "2026-06-08T11:30:00Z",
+      "entered_at": "2026-06-08T11:30:00Z",
+      "closed_at": "2026-06-08T12:00:00Z",
+      "outcome": "stop_before_target",
+      "gross_result_r": -1.0,
+      "net_result_r": -1.147333,
+      "fee_cost_r": 0.108044,
+      "slippage_cost_r": 0.039289
+    },
+    {
+      "symbol": "BTCUSDT",
+      "direction": "long",
+      "score": 85.32,
+      "signal_at": "2026-06-08T13:00:00Z",
+      "entered_at": "2026-06-08T13:00:00Z",
+      "closed_at": "2026-06-08T23:45:00Z",
+      "outcome": "stop_before_target",
+      "gross_result_r": -1.0,
+      "net_result_r": -1.110328,
+      "fee_cost_r": 0.080907,
+      "slippage_cost_r": 0.029421
+    }
+  ],
+  "limitations": [
+    "V2 was specified after V1 failed on a later, non-overlapping period.",
+    "Price-only replay uses a fixed spread and fixed symbol list.",
+    "Historical open interest, funding, latency, and market impact are not modeled.",
+    "Intrabar stop/target conflicts are excluded as ambiguous."
+  ]
+}

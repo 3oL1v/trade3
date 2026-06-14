@@ -1,0 +1,43 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\trade3\apps\api\.venv\Scripts\trade3-overnight.exe\__main__.py", line 10, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\trade3\apps\api\src\trade3_api\overnight_cli.py", line 10, in main
+    asyncio.run(_run(arguments))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Пользователь\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\Пользователь\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Пользователь\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\trade3\apps\api\src\trade3_api\overnight_cli.py", line 41, in _run
+    await runner.run()
+  File "C:\trade3\apps\api\src\trade3_api\overnight_research.py", line 136, in run
+    dataset = await cache.load_or_fetch(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "C:\trade3\apps\api\src\trade3_api\candle_cache.py", line 32, in load_or_fetch
+    candles = await client.get_historical_candles(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "C:\trade3\apps\api\src\trade3_api\bybit.py", line 189, in get_historical_candles
+    payload = await self._get(
+              ^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\trade3\apps\api\src\trade3_api\bybit.py", line 60, in _get
+    raise BybitApiError(
+        f"Bybit retCode={payload.get('retCode')}: {payload.get('retMsg')}"
+    )
+trade3_api.bybit.BybitApiError: Bybit retCode=10006: Too many visits. Exceeded the API Rate Limit.

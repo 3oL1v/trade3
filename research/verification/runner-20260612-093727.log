@@ -1,0 +1,4 @@
+window=1 trades=685 expectancy=-0.0598 profit_factor=0.9134
+window=2 trades=589 expectancy=-0.1617 profit_factor=0.7797
+window=3 trades=491 expectancy=-0.252 profit_factor=0.6799
+completed run=C:\trade3\research\verification\runs\20260612-063728 passed=False

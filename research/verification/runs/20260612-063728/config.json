@@ -1,0 +1,67 @@
+{
+  "hypothesis_id": "trend-continuation-v2-trial-485-frozen",
+  "source": "Selected as rank 1 by train+validation score before the 2026-05-13 to 2026-06-10 holdout was opened.",
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "XRPUSDT",
+    "DOGEUSDT",
+    "ADAUSDT",
+    "BNBUSDT",
+    "AVAXUSDT",
+    "LINKUSDT",
+    "DOTUSDT",
+    "LTCUSDT",
+    "BCHUSDT",
+    "NEARUSDT",
+    "SUIUSDT",
+    "APTUSDT",
+    "ARBUSDT",
+    "OPUSDT",
+    "UNIUSDT",
+    "1000PEPEUSDT",
+    "TRXUSDT"
+  ],
+  "windows": [
+    {
+      "start": "2025-07-01T00:00:00Z",
+      "end": "2025-09-01T00:00:00Z"
+    },
+    {
+      "start": "2025-09-01T00:00:00Z",
+      "end": "2025-11-01T00:00:00Z"
+    },
+    {
+      "start": "2025-11-01T00:00:00Z",
+      "end": "2026-01-01T00:00:00Z"
+    }
+  ],
+  "parameters": {
+    "min_trend_separation_atr": 0.415,
+    "pullback_lookback": 7,
+    "pullback_band_atr": 0.239,
+    "min_stop_atr": 1.138,
+    "min_stop_percent": 0.6,
+    "max_stop_percent": 2.0,
+    "target_r": 2.385,
+    "min_volume_ratio": 1.567,
+    "min_close_strength": 0.578,
+    "stop_buffer_atr": 0.312,
+    "max_modeled_cost_r": 0.1749,
+    "max_hold_hours": 16
+  },
+  "criteria": {
+    "minimum_total_trades": 200,
+    "minimum_profitable_symbols": 12,
+    "minimum_aggregate_profit_factor": 1.15,
+    "require_positive_expectancy_each_window": true,
+    "maximum_single_symbol_profit_share": 0.35
+  },
+  "warmup_days": 7,
+  "spread_bps": 1.0,
+  "taker_fee_rate_pct": 0.055,
+  "slippage_bps": 2.0,
+  "cache_directory": "research\\cache\\bybit-fixed-verification",
+  "output_directory": "research\\verification\\runs"
+}

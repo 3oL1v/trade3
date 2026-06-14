@@ -1,0 +1,180 @@
+.journal-backdrop {
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(0, 0, 0, 0.58);
+}
+
+.journal-drawer {
+  width: min(760px, 92vw);
+  height: 100vh;
+  overflow: auto;
+  border-left: 1px solid var(--line);
+  background: #091218;
+  box-shadow: -18px 0 48px rgba(0, 0, 0, 0.38);
+}
+
+.journal-header {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--line);
+  background: #091218;
+}
+
+.journal-header > div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #dce4e8;
+  font: 700 11px/1 "IBM Plex Mono", Consolas, monospace;
+}
+
+.journal-header button {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #81919b;
+  cursor: pointer;
+}
+
+.journal-stats {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  border-bottom: 1px solid var(--line);
+}
+
+.journal-stats > div {
+  min-width: 0;
+  padding: 12px 10px;
+  border-right: 1px solid var(--line-soft);
+}
+
+.journal-stats span {
+  display: block;
+  min-height: 22px;
+  color: #71838e;
+  font: 600 8px/1.3 "IBM Plex Mono", Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.journal-stats strong {
+  color: #e0e7ea;
+  font: 700 16px/1 "IBM Plex Mono", Consolas, monospace;
+}
+
+.journal-note,
+.journal-error {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  margin: 10px;
+  padding: 8px 10px;
+  border: 1px solid rgba(216, 164, 61, 0.35);
+  color: #b3a16f;
+  font-size: 9px;
+}
+
+.journal-error {
+  border-color: rgba(239, 102, 95, 0.45);
+  color: #f08a84;
+}
+
+.journal-sample-warning {
+  margin: 0 10px 10px;
+  color: #d8a43d;
+  font: 600 9px/1.4 "IBM Plex Mono", Consolas, monospace;
+}
+
+.journal-table {
+  margin: 10px;
+  border: 1px solid var(--line);
+}
+
+.journal-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1.2fr 1.35fr 0.7fr;
+  gap: 8px;
+  min-height: 52px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.journal-row > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.journal-row strong {
+  overflow: hidden;
+  color: #cdd7dc;
+  font: 700 9px/1.3 "IBM Plex Mono", Consolas, monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.journal-row strong.warning {
+  color: var(--amber);
+}
+
+.journal-row strong.positive {
+  color: var(--teal);
+}
+
+.journal-row strong.negative {
+  color: var(--red);
+}
+
+.journal-row small {
+  overflow: hidden;
+  margin-top: 4px;
+  color: #6e808b;
+  font: 500 8px/1.2 "IBM Plex Mono", Consolas, monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.journal-columns {
+  min-height: 28px;
+  background: #0c171d;
+  color: #71838e;
+  font: 600 8px/1 "IBM Plex Mono", Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.journal-empty {
+  padding: 36px 20px;
+  color: #667984;
+  font: 500 10px/1.5 "IBM Plex Mono", Consolas, monospace;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .journal-drawer {
+    width: 100vw;
+  }
+
+  .journal-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .journal-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .journal-columns {
+    display: none;
+  }
+}

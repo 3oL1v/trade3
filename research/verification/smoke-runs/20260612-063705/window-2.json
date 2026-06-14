@@ -1,0 +1,142 @@
+{
+  "generated_at": "2026-06-12T06:37:12.551172Z",
+  "strategy": "trend_continuation_v2",
+  "execution_policy": "next_5m_open_2r_or_stop_v2",
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT"
+  ],
+  "start": "2025-12-23T00:00:00Z",
+  "end": "2025-12-26T00:00:00Z",
+  "warmup_days": 7,
+  "spread_bps": 1.0,
+  "taker_fee_rate_pct": 0.055,
+  "slippage_bps": 2.0,
+  "total_recorded_signals": 3,
+  "resolved_trades": 3,
+  "censored_signals": 0,
+  "ambiguous_signals": 0,
+  "skipped_signals": 0,
+  "gross_expectancy_r": -1.0,
+  "net_expectancy_r": -1.135,
+  "average_fee_cost_r": 0.099,
+  "average_slippage_cost_r": 0.036,
+  "average_total_cost_r": 0.135,
+  "overall": {
+    "label": "all",
+    "trades": 3,
+    "wins": 0,
+    "losses": 3,
+    "win_rate": 0.0,
+    "expectancy_r": -1.135,
+    "profit_factor": null,
+    "cumulative_net_r": -3.405,
+    "max_drawdown_r": 3.405
+  },
+  "score_buckets": [
+    {
+      "label": "70-79.99",
+      "trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": null,
+      "expectancy_r": null,
+      "profit_factor": null,
+      "cumulative_net_r": null,
+      "max_drawdown_r": null
+    },
+    {
+      "label": "80-89.99",
+      "trades": 3,
+      "wins": 0,
+      "losses": 3,
+      "win_rate": 0.0,
+      "expectancy_r": -1.135,
+      "profit_factor": null,
+      "cumulative_net_r": -3.405,
+      "max_drawdown_r": 3.405
+    },
+    {
+      "label": "90-100",
+      "trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": null,
+      "expectancy_r": null,
+      "profit_factor": null,
+      "cumulative_net_r": null,
+      "max_drawdown_r": null
+    }
+  ],
+  "directions": [
+    {
+      "label": "long",
+      "trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": null,
+      "expectancy_r": null,
+      "profit_factor": null,
+      "cumulative_net_r": null,
+      "max_drawdown_r": null
+    },
+    {
+      "label": "short",
+      "trades": 3,
+      "wins": 0,
+      "losses": 3,
+      "win_rate": 0.0,
+      "expectancy_r": -1.135,
+      "profit_factor": null,
+      "cumulative_net_r": -3.405,
+      "max_drawdown_r": 3.405
+    }
+  ],
+  "trades": [
+    {
+      "symbol": "BTCUSDT",
+      "direction": "short",
+      "score": 86.96,
+      "signal_at": "2025-12-23T15:00:00Z",
+      "entered_at": "2025-12-23T15:00:00Z",
+      "closed_at": "2025-12-23T16:00:00Z",
+      "outcome": "stop_before_target",
+      "gross_result_r": -1.0,
+      "net_result_r": -1.132979,
+      "fee_cost_r": 0.097518,
+      "slippage_cost_r": 0.035461
+    },
+    {
+      "symbol": "ETHUSDT",
+      "direction": "short",
+      "score": 82.89,
+      "signal_at": "2025-12-23T15:00:00Z",
+      "entered_at": "2025-12-23T15:00:00Z",
+      "closed_at": "2025-12-23T16:15:00Z",
+      "outcome": "stop_before_target",
+      "gross_result_r": -1.0,
+      "net_result_r": -1.1056,
+      "fee_cost_r": 0.07744,
+      "slippage_cost_r": 0.02816
+    },
+    {
+      "symbol": "ETHUSDT",
+      "direction": "short",
+      "score": 85.4,
+      "signal_at": "2025-12-25T08:30:00Z",
+      "entered_at": "2025-12-25T08:30:00Z",
+      "closed_at": "2025-12-25T15:25:00Z",
+      "outcome": "stop_before_target",
+      "gross_result_r": -1.0,
+      "net_result_r": -1.166448,
+      "fee_cost_r": 0.122062,
+      "slippage_cost_r": 0.044386
+    }
+  ],
+  "limitations": [
+    "V2 was specified after V1 failed on a later, non-overlapping period.",
+    "Price-only replay uses a fixed spread and fixed symbol list.",
+    "Historical open interest, funding, latency, and market impact are not modeled.",
+    "Intrabar stop/target conflicts are excluded as ambiguous."
+  ]
+}

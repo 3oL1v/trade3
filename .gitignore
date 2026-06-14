@@ -1,0 +1,53 @@
+
+# Codex local configuration
+.codex/
+
+# Claude Flow runtime data
+.claude-flow/data/
+.claude-flow/logs/
+.claude-flow/metrics/
+.claude-flow/sessions/
+.claude-flow/swarm/
+.claude-flow/daemon-state.json
+.claude-flow/daemon.pid
+.swarm/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Claude Code local config
+CLAUDE.local.md
+.venv/
+.ollama-models/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.py[cod]
+.env
+data/
+research/results/
+logs/
+*.db
+*.sqlite*
+node_modules/
+dist/
+coverage/
+output/
+*.tsbuildinfo
+
+# Build and analysis artifacts (not project deliverables)
+graphify-out/
+.playwright-cli/
+
+# Cached raw market data (re-downloadable, large)
+research/cache/
+
+# Local Ollama/Ruflo task runtime
+local_agents/inbox/
+local_agents/running/
+local_agents/done/
+local_agents/failed/
+local_agents/reports/
+local_agents/runtime/

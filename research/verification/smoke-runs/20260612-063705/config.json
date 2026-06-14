@@ -1,0 +1,45 @@
+{
+  "hypothesis_id": "fixed-verification-smoke",
+  "source": "Pipeline smoke test only.",
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT"
+  ],
+  "windows": [
+    {
+      "start": "2025-12-20T00:00:00Z",
+      "end": "2025-12-23T00:00:00Z"
+    },
+    {
+      "start": "2025-12-23T00:00:00Z",
+      "end": "2025-12-26T00:00:00Z"
+    }
+  ],
+  "parameters": {
+    "min_trend_separation_atr": 0.415,
+    "pullback_lookback": 7,
+    "pullback_band_atr": 0.239,
+    "min_stop_atr": 1.138,
+    "min_stop_percent": 0.6,
+    "max_stop_percent": 2.0,
+    "target_r": 2.385,
+    "min_volume_ratio": 1.567,
+    "min_close_strength": 0.578,
+    "stop_buffer_atr": 0.312,
+    "max_modeled_cost_r": 0.1749,
+    "max_hold_hours": 16
+  },
+  "criteria": {
+    "minimum_total_trades": 1,
+    "minimum_profitable_symbols": 1,
+    "minimum_aggregate_profit_factor": 1.01,
+    "require_positive_expectancy_each_window": false,
+    "maximum_single_symbol_profit_share": 1.0
+  },
+  "warmup_days": 7,
+  "spread_bps": 1.0,
+  "taker_fee_rate_pct": 0.055,
+  "slippage_bps": 2.0,
+  "cache_directory": "research\\cache\\bybit-fixed-smoke",
+  "output_directory": "research\\verification\\smoke-runs"
+}

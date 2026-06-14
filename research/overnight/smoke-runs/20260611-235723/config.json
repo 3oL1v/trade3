@@ -1,0 +1,29 @@
+{
+  "symbols": [
+    "BTCUSDT"
+  ],
+  "train": {
+    "start": "2026-06-01T00:00:00Z",
+    "end": "2026-06-04T00:00:00Z"
+  },
+  "validation": {
+    "start": "2026-06-04T00:00:00Z",
+    "end": "2026-06-07T00:00:00Z"
+  },
+  "holdout": {
+    "start": "2026-06-07T00:00:00Z",
+    "end": "2026-06-10T00:00:00Z"
+  },
+  "model": "qwen3.5:4b",
+  "ollama_base_url": "http://127.0.0.1:11434",
+  "max_hours": 0.1,
+  "max_trials": 2,
+  "holdout_top": 1,
+  "warmup_days": 4,
+  "spread_bps": 1.0,
+  "taker_fee_rate_pct": 0.055,
+  "slippage_bps": 2.0,
+  "random_seed": 20260612,
+  "cache_directory": "research\\cache\\bybit-smoke",
+  "output_directory": "research\\overnight\\smoke-runs"
+}
