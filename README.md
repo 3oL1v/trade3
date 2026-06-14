@@ -1,5 +1,7 @@
 # Trade3
 
+[![CI](https://github.com/3oL1v/trade3/actions/workflows/ci.yml/badge.svg)](https://github.com/3oL1v/trade3/actions/workflows/ci.yml)
+
 *A local decision-support terminal for discretionary futures trading.*
 
 **English** | [Русский](#русский)
