@@ -9,8 +9,9 @@ from .ai_models import AiMarketReview
 from .analysis_models import MarketAnalysisSnapshot
 from .bybit import BybitApiError, BybitPublicClient, SUPPORTED_INTERVALS_MINUTES
 from .config import get_settings
-from .decision_journal import ManualDecisionJournal
+from .decision_journal import DecisionNotFoundError, ManualDecisionJournal
 from .decision_models import (
+    DecisionOutcomeRequest,
     ManualDecision,
     ManualDecisionList,
     ManualDecisionRequest,
@@ -315,3 +316,18 @@ async def decision_stats(request: Request) -> ManualDecisionStats:
     if journal is None:
         raise HTTPException(status_code=503, detail="manual decision journal is disabled")
     return await journal.stats()
+
+
+@app.post("/v1/decisions/{decision_id}/outcome", response_model=ManualDecision)
+async def resolve_decision(
+    request: Request,
+    decision_id: Annotated[int, Path(ge=1)],
+    outcome: DecisionOutcomeRequest,
+) -> ManualDecision:
+    journal: ManualDecisionJournal | None = request.app.state.manual_journal
+    if journal is None:
+        raise HTTPException(status_code=503, detail="manual decision journal is disabled")
+    try:
+        return await journal.resolve(decision_id, outcome, datetime.now(UTC))
+    except DecisionNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc

@@ -38,6 +38,7 @@ export function DecisionActions({
         direction,
         ai_verdict: aiReview?.verdict ?? null,
         ai_conviction: aiReview?.conviction ?? null,
+        decision_price: analysis?.last_price ?? null,
         snapshot_generated_at: aiReview?.snapshot_generated_at ?? analysis?.generated_at ?? null,
         note: note.trim() || null,
         analysis_snapshot: analysis,

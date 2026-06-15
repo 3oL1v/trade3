@@ -109,10 +109,21 @@ Parameters stay fixed during a backtest run. The framework makes look-ahead tuni
 
 ## Status and roadmap
 
-Active as a learning and research codebase, not a product. Where it goes next:
+Active as a learning and research codebase, not a product.
 
-- A manual decision journal with its own schema: user accept, reject, or defer, plus the exact snapshot shown at decision time. It stays separate from the retired deterministic-strategy journal.
-- A shadow run that scores live calls against passive benchmarks (buy-and-hold, DCA, a simple EMA-trend baseline) before any real money is involved.
+Shipped:
+
+- A manual decision journal with its own schema: accept, reject, or defer, plus
+  the exact snapshot shown at decision time, separate from the retired
+  deterministic-strategy journal. It tracks agreement with the AI verdict.
+- Decision outcome tracking: resolve a call with a follow-up price and the
+  journal computes the directional return, accept win rate, and average return.
+
+Next:
+
+- A [shadow test](docs/shadow-test.md) that scores resolved calls against passive
+  benchmarks (buy-and-hold, DCA, a coin-toss baseline) with a pre-committed
+  kill criterion, before any real money is involved.
 
 ## Disclaimer
 
@@ -228,10 +239,21 @@ trade3-verify-fixed   Перепроверка замороженных пара
 
 ## Статус и планы
 
-Активен как учебная и исследовательская кодовая база, а не продукт. Куда дальше:
+Активен как учебная и исследовательская кодовая база, а не продукт.
 
-- Ручной журнал решений с собственной схемой: принять, отклонить или отложить, плюс точный снимок, показанный в момент решения. Он отделён от выведенного из работы журнала детерминированных стратегий.
-- Shadow-прогон, который оценивает живые сигналы против пассивных бенчмарков (buy-and-hold, DCA, простой EMA-тренд) до того, как в игру войдут реальные деньги.
+Сделано:
+
+- Ручной журнал решений с собственной схемой: принять, отклонить или отложить,
+  плюс точный снимок в момент решения, отдельно от выведенного из работы журнала
+  стратегий. Считает совпадение с вердиктом AI.
+- Отслеживание исхода решений: резолвишь решение ценой через горизонт, журнал
+  считает направленную доходность, accept win rate и среднюю доходность.
+
+Дальше:
+
+- [Shadow-тест](docs/shadow-test.md), который оценивает резолвнутые решения против
+  пассивных бенчмарков (buy-and-hold, DCA, coin-toss) с заранее записанным
+  kill-критерием, до того как в игру войдут реальные деньги.
 
 ## Дисклеймер
 

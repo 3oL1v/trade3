@@ -146,3 +146,50 @@
 .decision-tag.defer {
   color: #e3c272;
 }
+
+.decision-row-note {
+  display: block;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.decision-resolve {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.decision-resolve-input {
+  width: 86px;
+  padding: 4px 6px;
+  font-size: 11px;
+  color: var(--text-strong, #e7ecf3);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+}
+
+.decision-resolve-input::placeholder {
+  color: var(--text-muted, #8a93a3);
+}
+
+.decision-resolve-input:focus {
+  outline: none;
+  border-color: rgba(120, 160, 255, 0.5);
+}
+
+.decision-resolve-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px;
+  border: 1px solid rgba(56, 199, 122, 0.5);
+  border-radius: 5px;
+  background: rgba(56, 199, 122, 0.12);
+  color: #5bd693;
+  cursor: pointer;
+}
+
+.decision-resolve-btn:hover {
+  background: rgba(56, 199, 122, 0.22);
+}

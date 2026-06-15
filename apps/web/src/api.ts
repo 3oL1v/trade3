@@ -61,4 +61,10 @@ export const api = {
   decisions: (limit = 100) =>
     request<{ decisions: ManualDecision[] }>(`/v1/decisions?limit=${limit}`),
   decisionStats: () => request<ManualDecisionStats>("/v1/decisions/stats"),
+  resolveDecision: (id: number, price: number, note?: string | null) =>
+    request<ManualDecision>(`/v1/decisions/${id}/outcome`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ price, note: note ?? null }),
+    }),
 };

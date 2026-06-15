@@ -1,4 +1,4 @@
-import { ClipboardList, X } from "lucide-react";
+import { Check, ClipboardList, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "./api";
 import { moscowTime } from "./format";
@@ -26,31 +26,48 @@ export function DecisionJournalDrawer({
   const [decisions, setDecisions] = useState<ManualDecision[]>([]);
   const [stats, setStats] = useState<ManualDecisionStats | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [priceInputs, setPriceInputs] = useState<Record<number, string>>({});
+
+  const load = () =>
+    Promise.all([api.decisions(100), api.decisionStats()])
+      .then(([list, nextStats]) => {
+        setDecisions(list.decisions);
+        setStats(nextStats);
+        setError(null);
+      })
+      .catch((reason) => {
+        setError(reason instanceof Error ? reason.message : "Журнал решений недоступен");
+      });
 
   useEffect(() => {
     if (!open) return;
     let active = true;
-    const load = () => {
-      void Promise.all([api.decisions(100), api.decisionStats()])
-        .then(([list, nextStats]) => {
-          if (!active) return;
-          setDecisions(list.decisions);
-          setStats(nextStats);
-          setError(null);
-        })
-        .catch((reason) => {
-          if (active) {
-            setError(reason instanceof Error ? reason.message : "Журнал решений недоступен");
-          }
-        });
+    const tick = () => {
+      if (active) void load();
     };
-    load();
-    const timer = window.setInterval(load, 5000);
+    tick();
+    const timer = window.setInterval(tick, 5000);
     return () => {
       active = false;
       window.clearInterval(timer);
     };
   }, [open]);
+
+  const resolve = async (id: number) => {
+    const price = Number(priceInputs[id]);
+    if (!Number.isFinite(price) || price <= 0) return;
+    try {
+      await api.resolveDecision(id, price);
+      setPriceInputs((current) => {
+        const next = { ...current };
+        delete next[id];
+        return next;
+      });
+      await load();
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Не удалось записать исход");
+    }
+  };
 
   if (!open) return null;
 
@@ -72,19 +89,20 @@ export function DecisionJournalDrawer({
         </div>
         <div className="journal-stats">
           <Stat label="Всего решений" value={stats?.total ?? 0} />
-          <Stat label="Принято" value={stats?.accepted ?? 0} />
           <Stat label="Accept rate" value={percent(stats?.accept_rate)} />
-          <Stat label="Long / Short" value={`${stats?.longs ?? 0} / ${stats?.shorts ?? 0}`} />
+          <Stat label="Agreement с AI" value={percent(stats?.agreement_rate)} />
           <Stat
-            label="Совпало с AI"
-            value={`${stats?.agreed_with_ai ?? 0}/${stats?.ai_comparable ?? 0}`}
+            label="Исходов записано"
+            value={`${stats?.accepts_resolved ?? 0}/${stats?.accepted ?? 0}`}
           />
-          <Stat label="Agreement" value={percent(stats?.agreement_rate)} />
+          <Stat label="Accept win rate" value={percent(stats?.accept_win_rate)} />
+          <Stat label="Ср. доходность" value={signedPercent(stats?.average_accept_return_pct)} />
         </div>
         <div className="journal-note">
           <span>
-            Ручные дискреционные решения. Отдельно от выведенного из работы журнала
-            стратегий. Исходы сделок пока не отслеживаются — это фундамент под shadow-тест.
+            Ручные дискреционные решения, отдельно от выведенного из работы журнала
+            стратегий. Доходность — направленное движение от цены решения до цены исхода,
+            до комиссий и без бенчмарка. Это фундамент под shadow-тест, а не P&L.
           </span>
         </div>
         {error && <div className="journal-error">{error}</div>}
@@ -93,13 +111,14 @@ export function DecisionJournalDrawer({
             <span>Время / рынок</span>
             <span>Решение</span>
             <span>AI / совпадение</span>
-            <span>Заметка</span>
+            <span>Исход</span>
           </div>
           {decisions.map((decision) => (
             <div className="journal-row decision-columns" key={decision.id}>
               <div>
                 <strong>{decision.symbol}</strong>
                 <small>{moscowTime(decision.recorded_at)}</small>
+                {decision.note && <small className="decision-row-note">{decision.note}</small>}
               </div>
               <div>
                 <strong className={`decision-tag ${decision.action}`}>
@@ -107,18 +126,53 @@ export function DecisionJournalDrawer({
                 </strong>
                 <small>
                   {decision.direction === "none" ? "—" : decision.direction.toUpperCase()}
+                  {decision.decision_price != null && ` @ ${decision.decision_price}`}
                 </small>
               </div>
               <div>
                 <strong>
-                  {decision.ai_verdict ? verdictLabels[decision.ai_verdict] ?? decision.ai_verdict : "—"}
+                  {decision.ai_verdict
+                    ? verdictLabels[decision.ai_verdict] ?? decision.ai_verdict
+                    : "—"}
                 </strong>
                 <small className={agreementClass(decision.agreed_with_ai)}>
                   {agreementLabel(decision.agreed_with_ai)}
                 </small>
               </div>
               <div>
-                <small>{decision.note ?? "—"}</small>
+                {decision.outcome_return_pct != null ? (
+                  <>
+                    <strong className={returnClass(decision.outcome_return_pct)}>
+                      {signedPercent(decision.outcome_return_pct)}
+                    </strong>
+                    <small>@ {decision.outcome_price}</small>
+                  </>
+                ) : (
+                  <div className="decision-resolve">
+                    <input
+                      aria-label={`Цена исхода для решения ${decision.id}`}
+                      className="decision-resolve-input"
+                      inputMode="decimal"
+                      onChange={(event) =>
+                        setPriceInputs((current) => ({
+                          ...current,
+                          [decision.id]: event.target.value,
+                        }))
+                      }
+                      placeholder="цена исхода"
+                      type="text"
+                      value={priceInputs[decision.id] ?? ""}
+                    />
+                    <button
+                      aria-label={`Записать исход решения ${decision.id}`}
+                      className="decision-resolve-btn"
+                      onClick={() => void resolve(decision.id)}
+                      type="button"
+                    >
+                      <Check size={13} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -146,6 +200,11 @@ function percent(value: number | null | undefined) {
   return value == null ? "—" : `${(value * 100).toFixed(0)}%`;
 }
 
+function signedPercent(value: number | null | undefined) {
+  if (value == null) return "—";
+  return `${value > 0 ? "+" : ""}${(value * 100).toFixed(2)}%`;
+}
+
 function agreementLabel(value: boolean | null) {
   if (value === null) return "без AI";
   return value ? "совпало" : "расходится";
@@ -154,4 +213,8 @@ function agreementLabel(value: boolean | null) {
 function agreementClass(value: boolean | null) {
   if (value === null) return "";
   return value ? "positive" : "negative";
+}
+
+function returnClass(value: number) {
+  return value > 0 ? "positive" : value < 0 ? "negative" : "";
 }

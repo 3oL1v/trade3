@@ -10,12 +10,36 @@ from typing import Any
 from .decision_models import (
     DecisionAction,
     DecisionDirection,
+    DecisionOutcomeRequest,
     ManualDecision,
     ManualDecisionRequest,
     ManualDecisionStats,
 )
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+
+
+class DecisionNotFoundError(LookupError):
+    pass
+
+
+def forward_return_pct(
+    direction: DecisionDirection,
+    decision_price: float | None,
+    outcome_price: float,
+) -> float | None:
+    """Directional return from decision price to follow-up price, before costs.
+
+    A short call profits when price falls, so its sign is inverted. Reject and
+    defer carry no position; the raw upward move is recorded as context only.
+    """
+
+    if decision_price is None or decision_price <= 0 or outcome_price <= 0:
+        return None
+    raw = (outcome_price - decision_price) / decision_price
+    if direction == DecisionDirection.SHORT:
+        return round(-raw, 6)
+    return round(raw, 6)
 
 
 def agreement_with_ai(
@@ -57,6 +81,17 @@ class ManualDecisionJournal:
     ) -> ManualDecision:
         async with self._lock:
             return await asyncio.to_thread(self._record_sync, request, recorded_at)
+
+    async def resolve(
+        self,
+        decision_id: int,
+        outcome: DecisionOutcomeRequest,
+        resolved_at: datetime,
+    ) -> ManualDecision:
+        async with self._lock:
+            return await asyncio.to_thread(
+                self._resolve_sync, decision_id, outcome, resolved_at
+            )
 
     async def list_decisions(
         self,
@@ -101,9 +136,14 @@ class ManualDecisionJournal:
                     ai_verdict TEXT,
                     ai_conviction TEXT,
                     agreed_with_ai INTEGER,
+                    decision_price REAL,
                     snapshot_generated_at TEXT,
                     recorded_at TEXT NOT NULL,
                     note TEXT,
+                    outcome_price REAL,
+                    outcome_at TEXT,
+                    outcome_return_pct REAL,
+                    outcome_note TEXT,
                     analysis_snapshot_json TEXT,
                     ai_review_json TEXT
                 );
@@ -112,6 +152,7 @@ class ManualDecisionJournal:
                     ON manual_decisions(recorded_at DESC);
                 """
             )
+            _migrate_columns(connection)
             connection.execute(
                 """
                 INSERT INTO manual_decision_meta(key, value) VALUES('schema_version', ?)
@@ -133,6 +174,7 @@ class ManualDecisionJournal:
             "ai_verdict": request.ai_verdict,
             "ai_conviction": request.ai_conviction,
             "agreed_with_ai": None if agreed is None else int(agreed),
+            "decision_price": request.decision_price,
             "snapshot_generated_at": (
                 _iso(request.snapshot_generated_at) if request.snapshot_generated_at else None
             ),
@@ -146,11 +188,11 @@ class ManualDecisionJournal:
                 """
                 INSERT INTO manual_decisions (
                     symbol, action, direction, ai_verdict, ai_conviction,
-                    agreed_with_ai, snapshot_generated_at, recorded_at, note,
+                    agreed_with_ai, decision_price, snapshot_generated_at, recorded_at, note,
                     analysis_snapshot_json, ai_review_json
                 ) VALUES (
                     :symbol, :action, :direction, :ai_verdict, :ai_conviction,
-                    :agreed_with_ai, :snapshot_generated_at, :recorded_at, :note,
+                    :agreed_with_ai, :decision_price, :snapshot_generated_at, :recorded_at, :note,
                     :analysis_snapshot_json, :ai_review_json
                 )
                 """,
@@ -165,12 +207,53 @@ class ManualDecisionJournal:
             ai_verdict=request.ai_verdict,
             ai_conviction=request.ai_conviction,
             agreed_with_ai=agreed,
+            decision_price=request.decision_price,
             snapshot_generated_at=request.snapshot_generated_at,
             recorded_at=recorded_at.astimezone(UTC),
             note=request.note,
+            outcome_price=None,
+            outcome_at=None,
+            outcome_return_pct=None,
+            outcome_note=None,
             analysis_snapshot=request.analysis_snapshot,
             ai_review=request.ai_review,
         )
+
+    def _resolve_sync(
+        self,
+        decision_id: int,
+        outcome: DecisionOutcomeRequest,
+        resolved_at: datetime,
+    ) -> ManualDecision:
+        with self._connect() as connection:
+            row = connection.execute(
+                "SELECT * FROM manual_decisions WHERE id = ?", (decision_id,)
+            ).fetchone()
+            if row is None:
+                raise DecisionNotFoundError(f"decision {decision_id} not found")
+            direction = DecisionDirection(row["direction"])
+            return_pct = forward_return_pct(direction, row["decision_price"], outcome.price)
+            connection.execute(
+                """
+                UPDATE manual_decisions SET
+                    outcome_price = :outcome_price,
+                    outcome_at = :outcome_at,
+                    outcome_return_pct = :outcome_return_pct,
+                    outcome_note = :outcome_note
+                WHERE id = :id
+                """,
+                {
+                    "outcome_price": outcome.price,
+                    "outcome_at": _iso(resolved_at),
+                    "outcome_return_pct": return_pct,
+                    "outcome_note": outcome.note,
+                    "id": decision_id,
+                },
+            )
+            updated = connection.execute(
+                "SELECT * FROM manual_decisions WHERE id = ?", (decision_id,)
+            ).fetchone()
+        return _row_to_decision(updated)
 
     def _list_sync(self, limit: int, action: str | None) -> list[ManualDecision]:
         query = "SELECT * FROM manual_decisions"
@@ -189,20 +272,34 @@ class ManualDecisionJournal:
             rows = connection.execute("SELECT * FROM manual_decisions").fetchall()
         decisions = [_row_to_decision(row) for row in rows]
         total = len(decisions)
-        accepted = sum(d.action == DecisionAction.ACCEPT for d in decisions)
+        accepts = [d for d in decisions if d.action == DecisionAction.ACCEPT]
         comparable = [d for d in decisions if d.agreed_with_ai is not None]
         agreed = sum(d.agreed_with_ai is True for d in comparable)
+        resolved = [d for d in decisions if d.outcome_return_pct is not None]
+        accepts_resolved = [
+            d for d in accepts if d.outcome_return_pct is not None
+        ]
+        accept_returns = [d.outcome_return_pct for d in accepts_resolved]
+        accept_wins = sum(value > 0 for value in accept_returns)
         return ManualDecisionStats(
             total=total,
-            accepted=accepted,
+            accepted=len(accepts),
             rejected=sum(d.action == DecisionAction.REJECT for d in decisions),
             deferred=sum(d.action == DecisionAction.DEFER for d in decisions),
             longs=sum(d.direction == DecisionDirection.LONG for d in decisions),
             shorts=sum(d.direction == DecisionDirection.SHORT for d in decisions),
-            accept_rate=round(accepted / total, 4) if total else None,
+            accept_rate=round(len(accepts) / total, 4) if total else None,
             ai_comparable=len(comparable),
             agreed_with_ai=agreed,
             agreement_rate=round(agreed / len(comparable), 4) if comparable else None,
+            resolved=len(resolved),
+            accepts_resolved=len(accepts_resolved),
+            accept_win_rate=(
+                round(accept_wins / len(accepts_resolved), 4) if accepts_resolved else None
+            ),
+            average_accept_return_pct=(
+                round(sum(accept_returns) / len(accept_returns), 6) if accept_returns else None
+            ),
         )
 
 
@@ -216,12 +313,36 @@ def _row_to_decision(row: sqlite3.Row) -> ManualDecision:
         ai_verdict=row["ai_verdict"],
         ai_conviction=row["ai_conviction"],
         agreed_with_ai=None if agreed is None else bool(agreed),
+        decision_price=row["decision_price"],
         snapshot_generated_at=_optional_datetime(row["snapshot_generated_at"]),
         recorded_at=_datetime(row["recorded_at"]),
         note=row["note"],
+        outcome_price=row["outcome_price"],
+        outcome_at=_optional_datetime(row["outcome_at"]),
+        outcome_return_pct=row["outcome_return_pct"],
+        outcome_note=row["outcome_note"],
         analysis_snapshot=_load(row["analysis_snapshot_json"]),
         ai_review=_load(row["ai_review_json"]),
     )
+
+
+def _migrate_columns(connection: sqlite3.Connection) -> None:
+    existing = {
+        row["name"]
+        for row in connection.execute("PRAGMA table_info(manual_decisions)").fetchall()
+    }
+    columns = {
+        "decision_price": "REAL",
+        "outcome_price": "REAL",
+        "outcome_at": "TEXT",
+        "outcome_return_pct": "REAL",
+        "outcome_note": "TEXT",
+    }
+    for name, definition in columns.items():
+        if name not in existing:
+            connection.execute(
+                f"ALTER TABLE manual_decisions ADD COLUMN {name} {definition}"
+            )
 
 
 def _dump(value: dict[str, Any] | None) -> str | None:

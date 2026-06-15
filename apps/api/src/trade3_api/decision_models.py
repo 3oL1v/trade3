@@ -29,10 +29,18 @@ class ManualDecisionRequest(BaseModel):
     direction: DecisionDirection = DecisionDirection.NONE
     ai_verdict: str | None = None
     ai_conviction: str | None = None
+    decision_price: float | None = Field(default=None, gt=0)
     snapshot_generated_at: datetime | None = None
     note: str | None = Field(default=None, max_length=2000)
     analysis_snapshot: dict[str, Any] | None = None
     ai_review: dict[str, Any] | None = None
+
+
+class DecisionOutcomeRequest(BaseModel):
+    """Resolves a decision with the price observed at a follow-up horizon."""
+
+    price: float = Field(gt=0)
+    note: str | None = Field(default=None, max_length=2000)
 
 
 class ManualDecision(BaseModel):
@@ -43,9 +51,14 @@ class ManualDecision(BaseModel):
     ai_verdict: str | None
     ai_conviction: str | None
     agreed_with_ai: bool | None
+    decision_price: float | None
     snapshot_generated_at: datetime | None
     recorded_at: datetime
     note: str | None
+    outcome_price: float | None
+    outcome_at: datetime | None
+    outcome_return_pct: float | None
+    outcome_note: str | None
     analysis_snapshot: dict[str, Any] | None
     ai_review: dict[str, Any] | None
 
@@ -65,6 +78,10 @@ class ManualDecisionStats(BaseModel):
     ai_comparable: int = Field(ge=0)
     agreed_with_ai: int = Field(ge=0)
     agreement_rate: float | None
+    resolved: int = Field(ge=0)
+    accepts_resolved: int = Field(ge=0)
+    accept_win_rate: float | None
+    average_accept_return_pct: float | None
     note: str = (
         "Manual discretionary decisions, separate from the retired deterministic-strategy "
         "journal. Trade outcomes are not tracked yet."

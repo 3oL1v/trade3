@@ -419,6 +419,7 @@ export interface ManualDecisionRequest {
   direction?: DecisionDirection;
   ai_verdict?: string | null;
   ai_conviction?: string | null;
+  decision_price?: number | null;
   snapshot_generated_at?: string | null;
   note?: string | null;
   analysis_snapshot?: unknown;
@@ -433,9 +434,14 @@ export interface ManualDecision {
   ai_verdict: string | null;
   ai_conviction: string | null;
   agreed_with_ai: boolean | null;
+  decision_price: number | null;
   snapshot_generated_at: string | null;
   recorded_at: string;
   note: string | null;
+  outcome_price: number | null;
+  outcome_at: string | null;
+  outcome_return_pct: number | null;
+  outcome_note: string | null;
   analysis_snapshot: Record<string, unknown> | null;
   ai_review: Record<string, unknown> | null;
 }
@@ -451,5 +457,9 @@ export interface ManualDecisionStats {
   ai_comparable: number;
   agreed_with_ai: number;
   agreement_rate: number | null;
+  resolved: number;
+  accepts_resolved: number;
+  accept_win_rate: number | null;
+  average_accept_return_pct: number | null;
   note: string;
 }
