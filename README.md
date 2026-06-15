@@ -118,12 +118,14 @@ Shipped:
   deterministic-strategy journal. It tracks agreement with the AI verdict.
 - Decision outcome tracking: resolve a call with a follow-up price and the
   journal computes the directional return, accept win rate, and average return.
+- Automatic buy-and-hold BTC benchmark: each resolved call gets an excess return
+  vs BTC, plus a "beats BTC" rate across accepts, so the journal reports alpha
+  rather than raw return.
 
 Next:
 
-- A [shadow test](docs/shadow-test.md) that scores resolved calls against passive
-  benchmarks (buy-and-hold, DCA, a coin-toss baseline) with a pre-committed
-  kill criterion, before any real money is involved.
+- Run the [shadow test](docs/shadow-test.md): collect 40+ resolved calls and
+  check them against the pre-committed kill criterion before risking real money.
 
 ## Disclaimer
 
@@ -248,12 +250,14 @@ trade3-verify-fixed   Перепроверка замороженных пара
   стратегий. Считает совпадение с вердиктом AI.
 - Отслеживание исхода решений: резолвишь решение ценой через горизонт, журнал
   считает направленную доходность, accept win rate и среднюю доходность.
+- Автоматический бенчмарк buy-and-hold BTC: у каждого резолвнутого решения есть
+  excess vs BTC и доля «бьёт BTC» по accept-решениям, поэтому журнал показывает
+  alpha, а не просто доходность.
 
 Дальше:
 
-- [Shadow-тест](docs/shadow-test.md), который оценивает резолвнутые решения против
-  пассивных бенчмарков (buy-and-hold, DCA, coin-toss) с заранее записанным
-  kill-критерием, до того как в игру войдут реальные деньги.
+- Провести [shadow-тест](docs/shadow-test.md): собрать 40+ резолвнутых решений и
+  сверить с заранее записанным kill-критерием, до того как рисковать деньгами.
 
 ## Дисклеймер
 

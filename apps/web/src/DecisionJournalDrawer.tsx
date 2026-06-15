@@ -97,6 +97,8 @@ export function DecisionJournalDrawer({
           />
           <Stat label="Accept win rate" value={percent(stats?.accept_win_rate)} />
           <Stat label="Ср. доходность" value={signedPercent(stats?.average_accept_return_pct)} />
+          <Stat label="Бьёт BTC" value={percent(stats?.beat_benchmark_rate)} />
+          <Stat label="Ср. alpha vs BTC" value={signedPercent(stats?.average_excess_return_pct)} />
         </div>
         <div className="journal-note">
           <span>
@@ -145,7 +147,11 @@ export function DecisionJournalDrawer({
                     <strong className={returnClass(decision.outcome_return_pct)}>
                       {signedPercent(decision.outcome_return_pct)}
                     </strong>
-                    <small>@ {decision.outcome_price}</small>
+                    <small className={returnClass(decision.excess_return_pct ?? 0)}>
+                      {decision.excess_return_pct != null
+                        ? `${signedPercent(decision.excess_return_pct)} vs BTC`
+                        : `@ ${decision.outcome_price}`}
+                    </small>
                   </>
                 ) : (
                   <div className="decision-resolve">

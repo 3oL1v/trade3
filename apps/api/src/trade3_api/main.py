@@ -290,12 +290,29 @@ async def journal_stats(request: Request) -> JournalStats:
     return await journal.stats()
 
 
+async def _benchmark_price(request: Request) -> float | None:
+    symbol = get_settings().decision_benchmark_symbol
+    ticker = await request.app.state.live_store.ticker(symbol)
+    if ticker and ticker.last_price:
+        return ticker.last_price
+    try:
+        series = await request.app.state.bybit_client.get_candles(symbol, "5", 1)
+    except BybitApiError:
+        return None
+    return series.candles[-1].close if series.candles else None
+
+
 @app.post("/v1/decisions", response_model=ManualDecision)
 async def record_decision(request: Request, decision: ManualDecisionRequest) -> ManualDecision:
     journal: ManualDecisionJournal | None = request.app.state.manual_journal
     if journal is None:
         raise HTTPException(status_code=503, detail="manual decision journal is disabled")
-    return await journal.record(decision, datetime.now(UTC))
+    return await journal.record(
+        decision,
+        datetime.now(UTC),
+        benchmark_symbol=get_settings().decision_benchmark_symbol,
+        benchmark_price=await _benchmark_price(request),
+    )
 
 
 @app.get("/v1/decisions", response_model=ManualDecisionList)
@@ -328,6 +345,11 @@ async def resolve_decision(
     if journal is None:
         raise HTTPException(status_code=503, detail="manual decision journal is disabled")
     try:
-        return await journal.resolve(decision_id, outcome, datetime.now(UTC))
+        return await journal.resolve(
+            decision_id,
+            outcome,
+            datetime.now(UTC),
+            benchmark_price=await _benchmark_price(request),
+        )
     except DecisionNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc

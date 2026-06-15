@@ -442,6 +442,11 @@ export interface ManualDecision {
   outcome_at: string | null;
   outcome_return_pct: number | null;
   outcome_note: string | null;
+  benchmark_symbol: string | null;
+  benchmark_price: number | null;
+  benchmark_outcome_price: number | null;
+  benchmark_return_pct: number | null;
+  excess_return_pct: number | null;
   analysis_snapshot: Record<string, unknown> | null;
   ai_review: Record<string, unknown> | null;
 }
@@ -461,5 +466,8 @@ export interface ManualDecisionStats {
   accepts_resolved: number;
   accept_win_rate: number | null;
   average_accept_return_pct: number | null;
+  benchmark_resolved: number;
+  average_excess_return_pct: number | null;
+  beat_benchmark_rate: number | null;
   note: string;
 }

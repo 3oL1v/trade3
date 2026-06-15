@@ -35,11 +35,13 @@ results is the in-sample tuning that killed V1 and V2.
 
 ## What counts as passing
 
-Compare the journal's `accept` results against three passive benchmarks measured
-over the same windows:
+The journal computes the buy-and-hold BTC benchmark automatically: it stores the
+BTC price when you record a decision and again when you resolve it, then reports
+`excess return vs BTC` per call plus the `beats BTC` rate across accepts. Compare
+`accept` results against three passive benchmarks over the same windows:
 
-- **Buy-and-hold** BTC over the test period.
-- **DCA** (fixed buys at a regular interval).
+- **Buy-and-hold** BTC (automatic: see the `vs BTC` column and the alpha stats).
+- **DCA** (fixed buys at a regular interval), computed by hand for now.
 - **A flat coin toss** at the same 8-hour horizon (50% directional baseline).
 
 Pre-committed pass criteria, all required:
@@ -57,8 +59,9 @@ drop the money thesis. Do not re-test the same data to repair the result.
 ## Known limitations of this v1
 
 - Returns are directional move only, before fees, slippage, and funding.
-- There is no automatic benchmark series yet; buy-and-hold and DCA are computed
-  by hand for now.
+- The BTC benchmark is automatic, but its window is record-call time to
+  resolve-call time. Resolve at the horizon so it lines up with your outcome
+  price. DCA and coin-toss baselines are still computed by hand.
 - An 8-hour horizon is one arbitrary choice. It tests the call, not a managed
   trade with a stop and target.
 

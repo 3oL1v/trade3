@@ -59,6 +59,11 @@ class ManualDecision(BaseModel):
     outcome_at: datetime | None
     outcome_return_pct: float | None
     outcome_note: str | None
+    benchmark_symbol: str | None
+    benchmark_price: float | None
+    benchmark_outcome_price: float | None
+    benchmark_return_pct: float | None
+    excess_return_pct: float | None
     analysis_snapshot: dict[str, Any] | None
     ai_review: dict[str, Any] | None
 
@@ -82,6 +87,9 @@ class ManualDecisionStats(BaseModel):
     accepts_resolved: int = Field(ge=0)
     accept_win_rate: float | None
     average_accept_return_pct: float | None
+    benchmark_resolved: int = Field(ge=0)
+    average_excess_return_pct: float | None
+    beat_benchmark_rate: float | None
     note: str = (
         "Manual discretionary decisions, separate from the retired deterministic-strategy "
         "journal. Trade outcomes are not tracked yet."

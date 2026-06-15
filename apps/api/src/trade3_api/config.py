@@ -81,6 +81,7 @@ class Settings(BaseSettings):
     journal_minimum_sample_size: int = Field(default=100, ge=20, le=1000)
     manual_journal_enabled: bool = True
     manual_journal_database_path: str = "data/trade3_manual_journal.sqlite3"
+    decision_benchmark_symbol: str = "BTCUSDT"
     ollama_enabled: bool = True
     ollama_base_url: str = "http://127.0.0.1:11434"
     ollama_model: str = "qwen3.5:4b"

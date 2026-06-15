@@ -163,6 +163,31 @@ async def test_resolve_computes_directional_return_and_stats(tmp_path) -> None:
 
 
 @pytest.mark.asyncio
+async def test_resolve_computes_excess_over_benchmark(tmp_path) -> None:
+    journal = ManualDecisionJournal(str(tmp_path / "decisions.sqlite3"))
+    await journal.initialize()
+    now = datetime(2026, 6, 12, 10, 5, tzinfo=UTC)
+
+    # Long accept: +10% directional, BTC benchmark only +4% over the window.
+    decision = await journal.record(
+        request(decision_price=100.0), now, benchmark_symbol="BTCUSDT", benchmark_price=50_000.0
+    )
+    assert decision.benchmark_price == 50_000.0
+
+    resolved = await journal.resolve(
+        decision.id, DecisionOutcomeRequest(price=110.0), now, benchmark_price=52_000.0
+    )
+    assert resolved.outcome_return_pct == pytest.approx(0.10)
+    assert resolved.benchmark_return_pct == pytest.approx(0.04)
+    assert resolved.excess_return_pct == pytest.approx(0.06)
+
+    stats = await journal.stats()
+    assert stats.benchmark_resolved == 1
+    assert stats.average_excess_return_pct == pytest.approx(0.06)
+    assert stats.beat_benchmark_rate == 1.0
+
+
+@pytest.mark.asyncio
 async def test_resolve_missing_decision_raises(tmp_path) -> None:
     journal = ManualDecisionJournal(str(tmp_path / "decisions.sqlite3"))
     await journal.initialize()

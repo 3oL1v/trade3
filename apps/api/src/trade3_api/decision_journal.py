@@ -16,11 +16,28 @@ from .decision_models import (
     ManualDecisionStats,
 )
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
+DEFAULT_BENCHMARK_SYMBOL = "BTCUSDT"
 
 
 class DecisionNotFoundError(LookupError):
     pass
+
+
+def benchmark_return_pct(
+    price_at_decision: float | None,
+    price_at_outcome: float | None,
+) -> float | None:
+    """Buy-and-hold benchmark return over the decision window (always long)."""
+
+    if (
+        price_at_decision is None
+        or price_at_decision <= 0
+        or price_at_outcome is None
+        or price_at_outcome <= 0
+    ):
+        return None
+    return round((price_at_outcome - price_at_decision) / price_at_decision, 6)
 
 
 def forward_return_pct(
@@ -78,19 +95,24 @@ class ManualDecisionJournal:
         self,
         request: ManualDecisionRequest,
         recorded_at: datetime,
+        benchmark_symbol: str | None = None,
+        benchmark_price: float | None = None,
     ) -> ManualDecision:
         async with self._lock:
-            return await asyncio.to_thread(self._record_sync, request, recorded_at)
+            return await asyncio.to_thread(
+                self._record_sync, request, recorded_at, benchmark_symbol, benchmark_price
+            )
 
     async def resolve(
         self,
         decision_id: int,
         outcome: DecisionOutcomeRequest,
         resolved_at: datetime,
+        benchmark_price: float | None = None,
     ) -> ManualDecision:
         async with self._lock:
             return await asyncio.to_thread(
-                self._resolve_sync, decision_id, outcome, resolved_at
+                self._resolve_sync, decision_id, outcome, resolved_at, benchmark_price
             )
 
     async def list_decisions(
@@ -144,6 +166,11 @@ class ManualDecisionJournal:
                     outcome_at TEXT,
                     outcome_return_pct REAL,
                     outcome_note TEXT,
+                    benchmark_symbol TEXT,
+                    benchmark_price REAL,
+                    benchmark_outcome_price REAL,
+                    benchmark_return_pct REAL,
+                    excess_return_pct REAL,
                     analysis_snapshot_json TEXT,
                     ai_review_json TEXT
                 );
@@ -165,6 +192,8 @@ class ManualDecisionJournal:
         self,
         request: ManualDecisionRequest,
         recorded_at: datetime,
+        benchmark_symbol: str | None,
+        benchmark_price: float | None,
     ) -> ManualDecision:
         agreed = agreement_with_ai(request.action, request.direction, request.ai_verdict)
         row = {
@@ -180,6 +209,8 @@ class ManualDecisionJournal:
             ),
             "recorded_at": _iso(recorded_at),
             "note": request.note,
+            "benchmark_symbol": benchmark_symbol,
+            "benchmark_price": benchmark_price,
             "analysis_snapshot_json": _dump(request.analysis_snapshot),
             "ai_review_json": _dump(request.ai_review),
         }
@@ -189,41 +220,27 @@ class ManualDecisionJournal:
                 INSERT INTO manual_decisions (
                     symbol, action, direction, ai_verdict, ai_conviction,
                     agreed_with_ai, decision_price, snapshot_generated_at, recorded_at, note,
-                    analysis_snapshot_json, ai_review_json
+                    benchmark_symbol, benchmark_price, analysis_snapshot_json, ai_review_json
                 ) VALUES (
                     :symbol, :action, :direction, :ai_verdict, :ai_conviction,
                     :agreed_with_ai, :decision_price, :snapshot_generated_at, :recorded_at, :note,
-                    :analysis_snapshot_json, :ai_review_json
+                    :benchmark_symbol, :benchmark_price, :analysis_snapshot_json, :ai_review_json
                 )
                 """,
                 row,
             )
             decision_id = int(cursor.lastrowid or 0)
-        return ManualDecision(
-            id=decision_id,
-            symbol=request.symbol,
-            action=request.action,
-            direction=request.direction,
-            ai_verdict=request.ai_verdict,
-            ai_conviction=request.ai_conviction,
-            agreed_with_ai=agreed,
-            decision_price=request.decision_price,
-            snapshot_generated_at=request.snapshot_generated_at,
-            recorded_at=recorded_at.astimezone(UTC),
-            note=request.note,
-            outcome_price=None,
-            outcome_at=None,
-            outcome_return_pct=None,
-            outcome_note=None,
-            analysis_snapshot=request.analysis_snapshot,
-            ai_review=request.ai_review,
-        )
+            stored = connection.execute(
+                "SELECT * FROM manual_decisions WHERE id = ?", (decision_id,)
+            ).fetchone()
+        return _row_to_decision(stored)
 
     def _resolve_sync(
         self,
         decision_id: int,
         outcome: DecisionOutcomeRequest,
         resolved_at: datetime,
+        benchmark_price: float | None,
     ) -> ManualDecision:
         with self._connect() as connection:
             row = connection.execute(
@@ -233,13 +250,22 @@ class ManualDecisionJournal:
                 raise DecisionNotFoundError(f"decision {decision_id} not found")
             direction = DecisionDirection(row["direction"])
             return_pct = forward_return_pct(direction, row["decision_price"], outcome.price)
+            bench_pct = benchmark_return_pct(row["benchmark_price"], benchmark_price)
+            excess = (
+                round(return_pct - bench_pct, 6)
+                if return_pct is not None and bench_pct is not None
+                else None
+            )
             connection.execute(
                 """
                 UPDATE manual_decisions SET
                     outcome_price = :outcome_price,
                     outcome_at = :outcome_at,
                     outcome_return_pct = :outcome_return_pct,
-                    outcome_note = :outcome_note
+                    outcome_note = :outcome_note,
+                    benchmark_outcome_price = :benchmark_outcome_price,
+                    benchmark_return_pct = :benchmark_return_pct,
+                    excess_return_pct = :excess_return_pct
                 WHERE id = :id
                 """,
                 {
@@ -247,6 +273,9 @@ class ManualDecisionJournal:
                     "outcome_at": _iso(resolved_at),
                     "outcome_return_pct": return_pct,
                     "outcome_note": outcome.note,
+                    "benchmark_outcome_price": benchmark_price,
+                    "benchmark_return_pct": bench_pct,
+                    "excess_return_pct": excess,
                     "id": decision_id,
                 },
             )
@@ -281,6 +310,10 @@ class ManualDecisionJournal:
         ]
         accept_returns = [d.outcome_return_pct for d in accepts_resolved]
         accept_wins = sum(value > 0 for value in accept_returns)
+        accept_excess = [
+            d.excess_return_pct for d in accepts_resolved if d.excess_return_pct is not None
+        ]
+        beat = sum(value > 0 for value in accept_excess)
         return ManualDecisionStats(
             total=total,
             accepted=len(accepts),
@@ -299,6 +332,13 @@ class ManualDecisionJournal:
             ),
             average_accept_return_pct=(
                 round(sum(accept_returns) / len(accept_returns), 6) if accept_returns else None
+            ),
+            benchmark_resolved=len(accept_excess),
+            average_excess_return_pct=(
+                round(sum(accept_excess) / len(accept_excess), 6) if accept_excess else None
+            ),
+            beat_benchmark_rate=(
+                round(beat / len(accept_excess), 4) if accept_excess else None
             ),
         )
 
@@ -321,6 +361,11 @@ def _row_to_decision(row: sqlite3.Row) -> ManualDecision:
         outcome_at=_optional_datetime(row["outcome_at"]),
         outcome_return_pct=row["outcome_return_pct"],
         outcome_note=row["outcome_note"],
+        benchmark_symbol=row["benchmark_symbol"],
+        benchmark_price=row["benchmark_price"],
+        benchmark_outcome_price=row["benchmark_outcome_price"],
+        benchmark_return_pct=row["benchmark_return_pct"],
+        excess_return_pct=row["excess_return_pct"],
         analysis_snapshot=_load(row["analysis_snapshot_json"]),
         ai_review=_load(row["ai_review_json"]),
     )
@@ -337,6 +382,11 @@ def _migrate_columns(connection: sqlite3.Connection) -> None:
         "outcome_at": "TEXT",
         "outcome_return_pct": "REAL",
         "outcome_note": "TEXT",
+        "benchmark_symbol": "TEXT",
+        "benchmark_price": "REAL",
+        "benchmark_outcome_price": "REAL",
+        "benchmark_return_pct": "REAL",
+        "excess_return_pct": "REAL",
     }
     for name, definition in columns.items():
         if name not in existing:
