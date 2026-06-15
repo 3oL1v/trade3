@@ -39,6 +39,7 @@ class LocalOllamaAgents:
         self._client = client or httpx.AsyncClient(
             base_url=config.ollama_base_url.rstrip("/"),
             timeout=config.timeout_seconds,
+            trust_env=False,
         )
 
     async def close(self) -> None:

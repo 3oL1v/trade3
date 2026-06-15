@@ -30,6 +30,7 @@ class OllamaResearchAgents:
         self._client = httpx.AsyncClient(
             base_url=base_url.rstrip("/"),
             timeout=timeout_seconds,
+            trust_env=False,
         )
 
     async def close(self) -> None:

@@ -38,6 +38,7 @@ class OllamaMarketAnalyst:
         self._client = client or httpx.AsyncClient(
             base_url=base_url.rstrip("/"),
             timeout=timeout_seconds,
+            trust_env=False,
         )
         self._owns_client = client is None
         self._cache: dict[str, tuple[float, AiMarketReview]] = {}
