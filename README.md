@@ -6,6 +6,8 @@
 
 **English** | [Русский](#русский)
 
+![Trade3 terminal](docs/screenshot-terminal.png)
+
 Trade3 reads the futures market and prepares a trade. It never places the order. You do that part.
 
 It pulls public data from Bybit, works out the market structure, draws the zones and levels on a chart, asks a local LLM for a second opinion, and sizes the position with plain arithmetic. Then it waits for you. No code path places, edits, or cancels an order. That is the design.
