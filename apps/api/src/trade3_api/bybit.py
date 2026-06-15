@@ -30,14 +30,19 @@ class BybitPublicClient:
         max_retries: int = 2,
         transport: httpx.AsyncBaseTransport | None = None,
         minimum_request_interval_seconds: float = 0,
+        proxy: str | None = None,
     ) -> None:
         ssl_context = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        # trust_env=False so an unrelated system proxy (e.g. a SOCKS env var) cannot
+        # break startup. Set TRADE3_BYBIT_HTTP_PROXY to route through a proxy on purpose.
         self._client = httpx.AsyncClient(
             base_url=base_url.rstrip("/"),
             timeout=timeout_seconds,
             transport=transport,
             verify=ssl_context,
             headers={"User-Agent": "Trade3/0.1 public-market-data"},
+            trust_env=False,
+            proxy=proxy,
         )
         self._max_retries = max_retries
         self._minimum_request_interval_seconds = minimum_request_interval_seconds

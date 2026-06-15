@@ -54,6 +54,7 @@ class Settings(BaseSettings):
     bybit_ws_url: str = "wss://stream.bybit.com/v5/public/linear"
     bybit_request_timeout_seconds: float = Field(default=10, gt=0, le=30)
     bybit_max_retries: int = Field(default=2, ge=0, le=5)
+    bybit_http_proxy: str | None = None
     market_max_spread_bps: float = Field(default=15, gt=0, le=100)
     market_min_turnover_24h_usdt: float = Field(default=15_000_000, ge=0)
     market_min_open_interest_usdt: float = Field(default=5_000_000, ge=0)

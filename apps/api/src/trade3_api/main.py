@@ -39,6 +39,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         base_url=settings.bybit_base_url,
         timeout_seconds=settings.bybit_request_timeout_seconds,
         max_retries=settings.bybit_max_retries,
+        proxy=settings.bybit_http_proxy,
     )
     app.state.bybit_client = client
     app.state.default_universe_size = settings.market_universe_size
