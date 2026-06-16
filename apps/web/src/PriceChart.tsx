@@ -363,10 +363,11 @@ export function PriceChart({
       }
     }
 
-    // Trend lines add diagonal clutter, so they are detail-only.
-    const trendLines = detailed
-      ? (analysis?.trend_lines.filter((item) => item.timeframe === timeframe) ?? [])
-      : [];
+    // Trend lines are multi-touch support/resistance, at most two per timeframe,
+    // so they stay visible in focus mode as core structure.
+    const trendLines = (analysis?.trend_lines ?? []).filter(
+      (item) => item.timeframe === timeframe,
+    );
     for (const line of trendLines) {
       const series = chart.addSeries(LineSeries, {
         color: line.kind === "rising_support" ? "#2bc4a4" : "#ef665f",

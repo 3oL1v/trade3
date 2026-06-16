@@ -46,7 +46,7 @@ def analyze_market_snapshot(
         zones.extend(_level_zones(candles, timeframe, current_atr, highs, lows))
         zones.extend(_fair_value_gaps(candles, timeframe, current_atr))
         zones.extend(_order_blocks(candles, timeframe, current_atr))
-        trend_lines.extend(_trend_lines(candles, timeframe, highs, lows))
+        trend_lines.extend(_trend_lines(candles, timeframe, current_atr, highs, lows))
         flags.extend(_flag_patterns(candles, timeframe, current_atr))
 
     if not structures:
@@ -427,43 +427,83 @@ def _order_blocks(
 def _trend_lines(
     candles: list[Candle],
     timeframe: str,
+    current_atr: float,
     highs: list[SwingPoint],
     lows: list[SwingPoint],
 ) -> list[AnalysisTrendLine]:
-    result = []
-    if len(lows) >= 2 and lows[-1].price > lows[-2].price:
+    end_time = candles[-1].start_time
+    result: list[AnalysisTrendLine] = []
+    for kind, points, ascending in (
+        ("rising_support", lows, True),
+        ("falling_resistance", highs, False),
+    ):
+        fit = _fit_trend_line(points, current_atr, ascending=ascending)
+        if fit is None:
+            continue
+        anchor, slope = fit
+        end_price = anchor.price + slope * (end_time - anchor.time).total_seconds()
+        if end_price <= 0:
+            continue
         result.append(
             AnalysisTrendLine(
-                id=f"{timeframe}-rising-support",
+                id=f"{timeframe}-{kind.replace('_', '-')}",
                 timeframe=timeframe,
-                kind="rising_support",
-                start_time=lows[-2].time,
-                start_price=lows[-2].price,
-                end_time=candles[-1].start_time,
-                end_price=_project_price(lows[-2], lows[-1], candles[-1].start_time),
-            )
-        )
-    if len(highs) >= 2 and highs[-1].price < highs[-2].price:
-        result.append(
-            AnalysisTrendLine(
-                id=f"{timeframe}-falling-resistance",
-                timeframe=timeframe,
-                kind="falling_resistance",
-                start_time=highs[-2].time,
-                start_price=highs[-2].price,
-                end_time=candles[-1].start_time,
-                end_price=_project_price(highs[-2], highs[-1], candles[-1].start_time),
+                kind=kind,
+                start_time=anchor.time,
+                start_price=anchor.price,
+                end_time=end_time,
+                end_price=end_price,
             )
         )
     return result
 
 
-def _project_price(first: SwingPoint, second: SwingPoint, end_time: datetime) -> float:
-    duration = (second.time - first.time).total_seconds()
-    if duration <= 0:
-        return second.price
-    slope = (second.price - first.price) / duration
-    return max(second.price + slope * (end_time - second.time).total_seconds(), 1e-12)
+def _fit_trend_line(
+    points: list[SwingPoint],
+    current_atr: float,
+    *,
+    ascending: bool,
+) -> tuple[SwingPoint, float] | None:
+    """Best multi-touch support (ascending) or resistance (descending) line.
+
+    Searches lines through two swing points and keeps the one the most other
+    swings touch without piercing it, favouring more touches then a longer span.
+    A single recent higher-low pair still qualifies (two touches); three or more
+    touches simply rank higher.
+    """
+
+    tolerance = max(current_atr * 0.6, 1e-9)
+    best: tuple[tuple[int, float], SwingPoint, float] | None = None
+    count = len(points)
+    for i in range(count):
+        for j in range(i + 1, count):
+            first, second = points[i], points[j]
+            duration = (second.time - first.time).total_seconds()
+            if duration <= 0:
+                continue
+            if ascending and second.price <= first.price:
+                continue
+            if not ascending and second.price >= first.price:
+                continue
+            slope = (second.price - first.price) / duration
+            touches = 0
+            valid = True
+            for point in points[i:]:
+                line_price = first.price + slope * (point.time - first.time).total_seconds()
+                diff = point.price - line_price
+                if (ascending and diff < -tolerance) or (not ascending and diff > tolerance):
+                    valid = False
+                    break
+                if abs(diff) <= tolerance:
+                    touches += 1
+            if not valid or touches < 2:
+                continue
+            score = (touches, duration)
+            if best is None or score > best[0]:
+                best = (score, first, slope)
+    if best is None:
+        return None
+    return best[1], best[2]
 
 
 def _deduplicate_zones(zones: list[AnalysisZone], current_price: float) -> list[AnalysisZone]:

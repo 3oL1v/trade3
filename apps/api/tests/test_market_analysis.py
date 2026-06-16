@@ -65,6 +65,22 @@ def flag_candles() -> list[Candle]:
     return candles
 
 
+def test_trend_line_fits_ascending_higher_lows() -> None:
+    snapshot = analyze_market_snapshot(
+        symbol="BNBUSDT",
+        candles_by_interval={"15": structured_candles(15, 80)},
+    )
+    rising = [
+        line
+        for line in snapshot.trend_lines
+        if line.kind == "rising_support" and line.timeframe == "15"
+    ]
+    assert rising, "expected a rising support trend line across higher lows"
+    line = rising[0]
+    assert line.end_price > line.start_price
+    assert line.end_time > line.start_time
+
+
 def test_snapshot_detects_a_bull_flag() -> None:
     snapshot = analyze_market_snapshot(
         symbol="WLDUSDT",
