@@ -1,28 +1,28 @@
-# Data Discipline
+# Дисциплина данных
 
-The shadow test only produces a trustworthy answer if the data is collected honestly. The rules are fixed in `shadow-test.md`. This is the routine that keeps the dataset clean.
+Shadow-тест даёт результат, которому можно верить, только если данные собраны честно. Правила зафиксированы в `shadow-test.md`. Здесь — рутина, которая держит выборку чистой.
 
-## Every session
+## Каждую сессию
 
-- Record a decision only for setups you would genuinely act on. Press Accept (long or short), Reject, or Defer in the decision panel.
-- Do not record the same setup twice to inflate the count.
-- The decision stores the price and the exact analysis and AI snapshot shown, so you never have to reconstruct it later.
+- Записывай решение только на сетап, на котором ты бы реально действовал. В панели решения жми «Принять» (long или short), «Отклонить» или «Отложить».
+- Не записывай один и тот же сетап дважды, чтобы накрутить счётчик.
+- Решение сохраняет цену и точный снимок анализа и AI на тот момент, так что восстанавливать вручную ничего не придётся.
 
-## At the horizon (8 hours later)
+## На горизонте (через 8 часов)
 
-- The drawer flags decisions that are due with a "ПОРА" badge and a banner. Resolve them promptly so the outcome price matches the 8 hour mark.
-- Click the live-price button or paste the price, then confirm. The journal computes the directional return and the excess versus buy-and-hold BTC.
-- Resolve late and the benchmark window drifts; resolve at the horizon.
+- Журнал помечает решения, которые пора закрыть, бейджем «ПОРА» и баннером. Резолвь их вовремя, чтобы цена исхода совпала с 8-часовой отметкой.
+- Нажми кнопку live-цены или вставь цену вручную и подтверди. Журнал посчитает направленную доходность и превышение над buy-and-hold BTC.
+- Резолвнёшь поздно — окно бенчмарка поедет. Закрывай ровно на горизонте.
 
-## Weekly review
+## Раз в неделю
 
-- Export the journal to CSV from the drawer.
-- Check the running stats: accept win rate, average return, alpha versus BTC, the coin-toss z-score, and the per-symbol breakdown.
-- Do not change the rules based on what you see. Changing rules mid-run is the in-sample tuning that invalidates the test.
+- Выгрузи журнал в CSV из drawer.
+- Смотри текущую статистику: accept win rate, среднюю доходность, alpha против BTC, z-score против монетки и разбивку по символам.
+- Не меняй правила из-за того, что увидел. Менять правила по ходу — это та самая подгонка in-sample, которая обнуляет тест.
 
-## Stop conditions
+## Когда останавливаться
 
-- Stop and read the result once you have at least 40 resolved accept decisions.
-- Apply the pre-committed kill criterion in `shadow-test.md`. If it fails, close the trading branch. Do not re-test the same data to rescue it.
+- Останавливайся и читай результат, когда наберёшь хотя бы 40 резолвнутых accept-решений.
+- Применяй заранее записанный kill-критерий из `shadow-test.md`. Не прошло — закрывай торговую ветку. Не перепрогоняй те же данные, чтобы спасти результат.
 
-See [shadow-test.md](shadow-test.md) for the fixed rules and pass criteria.
+Фиксированные правила и критерий прохождения — в [shadow-test.md](shadow-test.md).
