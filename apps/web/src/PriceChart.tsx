@@ -8,6 +8,10 @@ import {
   LineStyle,
   type CandlestickData,
   type HistogramData,
+  type IChartApi,
+  type IPriceLine,
+  type ISeriesApi,
+  type ISeriesMarkersPluginApi,
   type LineData,
   type SeriesMarker,
   type Time,
@@ -104,6 +108,50 @@ function zoneFamily(kind: AnalysisZone["kind"]): "support" | "resistance" {
     : "resistance";
 }
 
+function structureMarkers(
+  analysis: MarketAnalysisSnapshot | null,
+  timeframe: Timeframe,
+  detailed: boolean,
+): SeriesMarker<UTCTimestamp>[] {
+  const structure = analysis?.structures.find((item) => item.timeframe === timeframe);
+  if (!structure) return [];
+  return [
+    ...(detailed
+      ? structure.swing_highs.slice(-8).map(
+          (point): SeriesMarker<UTCTimestamp> => ({
+            time: toTime(point.time),
+            position: "aboveBar",
+            color: "#ef827c",
+            shape: "circle",
+            text: "SH",
+            size: 0.6,
+          }),
+        )
+      : []),
+    ...(detailed
+      ? structure.swing_lows.slice(-8).map(
+          (point): SeriesMarker<UTCTimestamp> => ({
+            time: toTime(point.time),
+            position: "belowBar",
+            color: "#58d5bb",
+            shape: "circle",
+            text: "SL",
+            size: 0.6,
+          }),
+        )
+      : []),
+    ...structure.events.slice(detailed ? -6 : -3).map(
+      (event): SeriesMarker<UTCTimestamp> => ({
+        time: toTime(event.time),
+        position: event.kind.endsWith("up") ? "belowBar" : "aboveBar",
+        color: event.kind.includes("choch") ? "#d7a7ff" : "#70aefb",
+        shape: event.kind.endsWith("up") ? "arrowUp" : "arrowDown",
+        text: event.kind.toUpperCase(),
+      }),
+    ),
+  ].sort((left, right) => Number(left.time) - Number(right.time));
+}
+
 export function PriceChart({
   analysis,
   candles,
@@ -112,7 +160,19 @@ export function PriceChart({
   timeframe,
 }: PriceChartProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const chartRef = useRef<IChartApi | null>(null);
+  const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
+  const ema20Ref = useRef<ISeriesApi<"Line"> | null>(null);
+  const ema50Ref = useRef<ISeriesApi<"Line"> | null>(null);
+  const volumeRef = useRef<ISeriesApi<"Histogram"> | null>(null);
+  const markersRef = useRef<ISeriesMarkersPluginApi<Time> | null>(null);
+  const overlaySeriesRef = useRef<ISeriesApi<"Line">[]>([]);
+  const priceLinesRef = useRef<IPriceLine[]>([]);
+  const zonePrimitiveRef = useRef<ZonePrimitive | null>(null);
+  const datasetKeyRef = useRef<string>("");
 
+  // Create the chart once. Polling updates only change data, not the chart, so
+  // the user's manual zoom and pan survive the 15s refresh.
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -187,6 +247,37 @@ export function PriceChart({
     );
     chart.panes()[1]?.setHeight(105);
 
+    chartRef.current = chart;
+    candleSeriesRef.current = candleSeries;
+    ema20Ref.current = ema20;
+    ema50Ref.current = ema50;
+    volumeRef.current = volume;
+    markersRef.current = createSeriesMarkers(candleSeries, []);
+
+    return () => {
+      chart.remove();
+      chartRef.current = null;
+      candleSeriesRef.current = null;
+      ema20Ref.current = null;
+      ema50Ref.current = null;
+      volumeRef.current = null;
+      markersRef.current = null;
+      overlaySeriesRef.current = [];
+      priceLinesRef.current = [];
+      zonePrimitiveRef.current = null;
+      datasetKeyRef.current = "";
+    };
+  }, []);
+
+  // Update data and annotations in place, keeping the existing zoom.
+  useEffect(() => {
+    const chart = chartRef.current;
+    const candleSeries = candleSeriesRef.current;
+    const ema20 = ema20Ref.current;
+    const ema50 = ema50Ref.current;
+    const volume = volumeRef.current;
+    if (!chart || !candleSeries || !ema20 || !ema50 || !volume) return;
+
     const ordered = [...candles]
       .filter((item) => item.is_closed)
       .sort((a, b) => Date.parse(a.start_time) - Date.parse(b.start_time));
@@ -207,49 +298,24 @@ export function PriceChart({
     ema50.setData(ema(ordered, 50));
     volume.setData(volumeData);
 
+    // Clear the previous annotation layer before redrawing it.
+    for (const series of overlaySeriesRef.current) chart.removeSeries(series);
+    overlaySeriesRef.current = [];
+    for (const line of priceLinesRef.current) candleSeries.removePriceLine(line);
+    priceLinesRef.current = [];
+    if (zonePrimitiveRef.current) {
+      candleSeries.detachPrimitive(zonePrimitiveRef.current);
+      zonePrimitiveRef.current = null;
+    }
+
     const zones = relevantZones(analysis, timeframe, detailed);
     if (zones.length) {
-      candleSeries.attachPrimitive(new ZonePrimitive(zones));
+      const primitive = new ZonePrimitive(zones);
+      candleSeries.attachPrimitive(primitive);
+      zonePrimitiveRef.current = primitive;
     }
-    const structure = analysis?.structures.find((item) => item.timeframe === timeframe);
-    if (structure) {
-      const markers: SeriesMarker<UTCTimestamp>[] = [
-        ...(detailed
-          ? structure.swing_highs.slice(-8).map(
-              (point): SeriesMarker<UTCTimestamp> => ({
-                time: toTime(point.time),
-                position: "aboveBar",
-                color: "#ef827c",
-                shape: "circle",
-                text: "SH",
-                size: 0.6,
-              }),
-            )
-          : []),
-        ...(detailed
-          ? structure.swing_lows.slice(-8).map(
-              (point): SeriesMarker<UTCTimestamp> => ({
-                time: toTime(point.time),
-                position: "belowBar",
-                color: "#58d5bb",
-                shape: "circle",
-                text: "SL",
-                size: 0.6,
-              }),
-            )
-          : []),
-        ...structure.events.slice(detailed ? -6 : -3).map(
-          (event): SeriesMarker<UTCTimestamp> => ({
-            time: toTime(event.time),
-            position: event.kind.endsWith("up") ? "belowBar" : "aboveBar",
-            color: event.kind.includes("choch") ? "#d7a7ff" : "#70aefb",
-            shape: event.kind.endsWith("up") ? "arrowUp" : "arrowDown",
-            text: event.kind.toUpperCase(),
-          }),
-        ),
-      ].sort((left, right) => Number(left.time) - Number(right.time));
-      createSeriesMarkers(candleSeries, markers);
-    }
+
+    markersRef.current?.setMarkers(structureMarkers(analysis, timeframe, detailed));
 
     const trendLines =
       analysis?.trend_lines.filter((item) => item.timeframe === timeframe) ?? [];
@@ -265,6 +331,7 @@ export function PriceChart({
         { time: toTime(line.start_time), value: line.start_price },
         { time: toTime(line.end_time), value: line.end_price },
       ]);
+      overlaySeriesRef.current.push(series);
     }
 
     const preferred = analysis?.scenarios.find(
@@ -311,19 +378,26 @@ export function PriceChart({
         })),
       ];
       for (const line of scenarioLines) {
-        candleSeries.createPriceLine({
-          price: line.price,
-          color: line.color,
-          lineWidth: 1,
-          lineStyle: line.style,
-          axisLabelVisible: Boolean(line.title),
-          title: line.title,
-        });
+        priceLinesRef.current.push(
+          candleSeries.createPriceLine({
+            price: line.price,
+            color: line.color,
+            lineWidth: 1,
+            lineStyle: line.style,
+            axisLabelVisible: Boolean(line.title),
+            title: line.title,
+          }),
+        );
       }
     }
-    chart.timeScale().fitContent();
 
-    return () => chart.remove();
+    // Only refit the view when the dataset itself changes (new symbol or
+    // timeframe). Within the same dataset, leave the user's zoom alone.
+    const datasetKey = `${symbol}|${timeframe}`;
+    if (datasetKeyRef.current !== datasetKey) {
+      chart.timeScale().fitContent();
+      datasetKeyRef.current = datasetKey;
+    }
   }, [analysis, candles, detailed, symbol, timeframe]);
 
   return (
