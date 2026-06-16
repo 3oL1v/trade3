@@ -83,3 +83,9 @@ class CandleSeries(BaseModel):
     interval: str
     source_time: datetime
     candles: list[Candle]
+
+
+class SymbolPrice(BaseModel):
+    symbol: str
+    price: float
+    source: str

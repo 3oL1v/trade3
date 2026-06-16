@@ -194,6 +194,21 @@
   background: rgba(56, 199, 122, 0.22);
 }
 
+.decision-live-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px;
+  border: 1px solid rgba(120, 160, 255, 0.45);
+  border-radius: 5px;
+  background: rgba(120, 160, 255, 0.12);
+  color: #8fb2ff;
+  cursor: pointer;
+}
+.decision-live-btn:hover {
+  background: rgba(120, 160, 255, 0.22);
+}
+
 .journal-header-actions {
   display: flex;
   align-items: center;

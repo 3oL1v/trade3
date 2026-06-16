@@ -31,6 +31,10 @@ export const api = {
   universe: () => request<MarketUniverse>("/v1/markets/top?limit=20"),
   candles: (symbol: string, interval: Timeframe) =>
     request<CandleSeries>(`/v1/markets/${symbol}/candles?interval=${interval}&limit=240`),
+  price: (symbol: string) =>
+    request<{ symbol: string; price: number; source: string }>(
+      `/v1/markets/${symbol}/price`,
+    ),
   analysis: (symbol: string) =>
     request<MarketAnalysisSnapshot>(`/v1/analysis/${symbol}`),
   aiAnalysis: (symbol: string) =>

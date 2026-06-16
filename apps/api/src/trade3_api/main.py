@@ -23,7 +23,7 @@ from .journal_models import JournalSignalList, JournalStats
 from .live_engine import LiveMarketEngine
 from .live_models import IntradayScan, LiveEngineStatus
 from .live_store import LiveMarketStore
-from .market_models import CandleSeries, MarketUniverse
+from .market_models import CandleSeries, MarketUniverse, SymbolPrice
 from .market_analysis import analyze_market_snapshot
 from .market_flow import build_market_flow_snapshot
 from .models import PositionSizeRequest, PositionSizeResult, ScoreRequest, ScoreResult
@@ -183,6 +183,23 @@ async def market_candles(
         return await request.app.state.bybit_client.get_candles(symbol, interval, limit)
     except BybitApiError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
+@app.get("/v1/markets/{symbol}/price", response_model=SymbolPrice)
+async def market_price(
+    request: Request,
+    symbol: Annotated[str, Path(pattern=r"^[A-Z0-9]{2,20}USDT$")],
+) -> SymbolPrice:
+    ticker = await request.app.state.live_store.ticker(symbol)
+    if ticker and ticker.last_price:
+        return SymbolPrice(symbol=symbol, price=ticker.last_price, source="live")
+    try:
+        series = await request.app.state.bybit_client.get_candles(symbol, "5", 1)
+    except BybitApiError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    if not series.candles:
+        raise HTTPException(status_code=503, detail="no price available")
+    return SymbolPrice(symbol=symbol, price=series.candles[-1].close, source="rest")
 
 
 @app.get("/v1/live/status", response_model=LiveEngineStatus)

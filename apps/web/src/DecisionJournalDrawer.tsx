@@ -1,4 +1,4 @@
-import { Check, ClipboardList, Download, X } from "lucide-react";
+import { Activity, Check, ClipboardList, Download, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "./api";
 import { moscowTime } from "./format";
@@ -52,6 +52,15 @@ export function DecisionJournalDrawer({
       window.clearInterval(timer);
     };
   }, [open]);
+
+  const fillLivePrice = async (id: number, symbol: string) => {
+    try {
+      const result = await api.price(symbol);
+      setPriceInputs((current) => ({ ...current, [id]: String(result.price) }));
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Не удалось получить цену");
+    }
+  };
 
   const resolve = async (id: number) => {
     const price = Number(priceInputs[id]);
@@ -165,6 +174,15 @@ export function DecisionJournalDrawer({
                   </>
                 ) : (
                   <div className="decision-resolve">
+                    <button
+                      aria-label={`Подставить текущую цену для решения ${decision.id}`}
+                      className="decision-live-btn"
+                      onClick={() => void fillLivePrice(decision.id, decision.symbol)}
+                      type="button"
+                      title="Текущая цена"
+                    >
+                      <Activity size={13} />
+                    </button>
                     <input
                       aria-label={`Цена исхода для решения ${decision.id}`}
                       className="decision-resolve-input"
