@@ -5,6 +5,7 @@ from statistics import fmean
 from .analysis_models import (
     AnalysisTrendLine,
     AnalysisZone,
+    FlagPattern,
     MarketAnalysisSnapshot,
     MarketBias,
     ScenarioTarget,
@@ -32,6 +33,7 @@ def analyze_market_snapshot(
     structures: list[TimeframeStructure] = []
     zones: list[AnalysisZone] = []
     trend_lines: list[AnalysisTrendLine] = []
+    flags: list[FlagPattern] = []
 
     for timeframe in TIMEFRAME_ORDER:
         candles = _closed(candles_by_interval.get(timeframe, []))
@@ -45,6 +47,7 @@ def analyze_market_snapshot(
         zones.extend(_fair_value_gaps(candles, timeframe, current_atr))
         zones.extend(_order_blocks(candles, timeframe, current_atr))
         trend_lines.extend(_trend_lines(candles, timeframe, highs, lows))
+        flags.extend(_flag_patterns(candles, timeframe, current_atr))
 
     if not structures:
         raise ValueError("at least one timeframe with 30 closed candles is required")
@@ -62,6 +65,7 @@ def analyze_market_snapshot(
         structures=structures,
         zones=zones,
         trend_lines=trend_lines,
+        flags=flags,
         scenarios=scenarios,
     )
 
@@ -482,6 +486,101 @@ def _deduplicate_zones(zones: list[AnalysisZone], current_price: float) -> list[
         )
     )
     return selected
+
+
+FLAG_POLE_ATR = 3.5
+FLAG_MIN_POLE_BARS = 3
+FLAG_MAX_POLE_BARS = 12
+FLAG_MIN_BARS = 3
+FLAG_MAX_BARS = 18
+FLAG_RANGE_FRAC = 0.5
+FLAG_POLE_EFFICIENCY = 0.6
+FLAG_RETRACE_FRAC = 0.5
+
+
+def _flag_patterns(
+    candles: list[Candle],
+    timeframe: str,
+    current_atr: float,
+) -> list[FlagPattern]:
+    """Detect a current pole-and-flag continuation anchored to the latest bar.
+
+    Deterministic and deliberately conservative: a strong impulse (the pole)
+    followed by a tight consolidation that holds the move (the flag). It will
+    miss flags a human eye accepts loosely; that is the intended trade-off.
+    """
+
+    n = len(candles)
+    if current_atr <= 0 or n < FLAG_MIN_POLE_BARS + FLAG_MIN_BARS + 1:
+        return []
+
+    best: tuple[float, FlagPattern] | None = None
+    for flag_bars in range(FLAG_MIN_BARS, FLAG_MAX_BARS + 1):
+        if flag_bars >= n - FLAG_MIN_POLE_BARS:
+            break
+        flag = candles[n - flag_bars :]
+        flag_high = max(item.high for item in flag)
+        flag_low = min(item.low for item in flag)
+        flag_range = flag_high - flag_low
+        if flag_range <= 0:
+            continue
+        for pole_bars in range(FLAG_MIN_POLE_BARS, FLAG_MAX_POLE_BARS + 1):
+            start = n - flag_bars - pole_bars
+            if start < 1:
+                continue
+            pole = candles[start : n - flag_bars]
+            base = candles[start - 1].close
+            pole_end = pole[-1].close
+            pole_height = abs(pole_end - base)
+            if pole_height < FLAG_POLE_ATR * current_atr:
+                continue
+            points = [base, *(item.close for item in pole)]
+            gross = sum(abs(points[i + 1] - points[i]) for i in range(len(points) - 1))
+            if gross <= 0 or pole_height / gross < FLAG_POLE_EFFICIENCY:
+                continue
+            if flag_range > FLAG_RANGE_FRAC * pole_height:
+                continue
+            direction = "bull" if pole_end > base else "bear"
+            if direction == "bull":
+                if flag_low < pole_end - FLAG_RETRACE_FRAC * pole_height:
+                    continue
+                if flag_high > pole_end + 0.4 * pole_height:
+                    continue
+            else:
+                if flag_high > pole_end + FLAG_RETRACE_FRAC * pole_height:
+                    continue
+                if flag_low < pole_end - 0.4 * pole_height:
+                    continue
+            score = pole_height / current_atr - flag_range / pole_height
+            if best is not None and score <= best[0]:
+                continue
+            prior = flag[:-1]
+            if direction == "bull":
+                broke = bool(prior) and flag[-1].close > max(item.high for item in prior)
+            else:
+                broke = bool(prior) and flag[-1].close < min(item.low for item in prior)
+            best = (
+                score,
+                FlagPattern(
+                    timeframe=timeframe,
+                    direction=direction,
+                    status="breakout" if broke else "forming",
+                    pole_start_time=pole[0].start_time,
+                    pole_start_price=base,
+                    pole_end_time=pole[-1].start_time,
+                    pole_end_price=pole_end,
+                    flag_start_time=flag[0].start_time,
+                    flag_end_time=flag[-1].start_time,
+                    flag_upper=flag_high,
+                    flag_lower=flag_low,
+                    rationale=(
+                        f"{pole_height / current_atr:.1f} ATR pole over {pole_bars} bars, "
+                        f"{flag_bars}-bar consolidation within "
+                        f"{flag_range / pole_height * 100:.0f}% of the pole"
+                    ),
+                ),
+            )
+    return [best[1]] if best else []
 
 
 def _build_scenarios(

@@ -28,6 +28,67 @@ def structured_candles(interval_minutes: int, count: int = 120) -> list[Candle]:
     return candles
 
 
+def flag_candles() -> list[Candle]:
+    start = datetime(2026, 1, 1, tzinfo=UTC)
+    candles: list[Candle] = []
+    price = 100.0
+    index = 0
+
+    def push(open_price: float, close: float, wick: float, volume: float) -> None:
+        nonlocal index
+        candles.append(
+            Candle(
+                start_time=start + timedelta(minutes=15 * index),
+                open=open_price,
+                high=max(open_price, close) + wick,
+                low=min(open_price, close) - wick,
+                close=close,
+                volume=volume,
+                turnover_usdt=10_000,
+                is_closed=True,
+            )
+        )
+        index += 1
+
+    for _ in range(40):  # flat base
+        nxt = price + 0.05
+        push(price, nxt, 0.3, 100)
+        price = nxt
+    for _ in range(6):  # strong pole
+        nxt = price + 2.5
+        push(price, nxt, 0.3, 300)
+        price = nxt
+    for _ in range(8):  # tight consolidation at the top
+        nxt = price - 0.1
+        push(price, nxt, 0.25, 120)
+        price = nxt
+    return candles
+
+
+def test_snapshot_detects_a_bull_flag() -> None:
+    snapshot = analyze_market_snapshot(
+        symbol="WLDUSDT",
+        candles_by_interval={"15": flag_candles()},
+    )
+
+    flags = [flag for flag in snapshot.flags if flag.timeframe == "15"]
+    assert flags, "expected a flag on the 15m timeframe"
+    flag = flags[0]
+    assert flag.direction == "bull"
+    assert flag.status in {"forming", "breakout"}
+    assert flag.pole_end_price > flag.pole_start_price
+    assert flag.flag_upper >= flag.flag_lower
+
+
+def test_snapshot_reports_no_flag_on_quiet_drift() -> None:
+    snapshot = analyze_market_snapshot(
+        symbol="BTCUSDT",
+        candles_by_interval={"15": structured_candles(15, 80)},
+    )
+    # A gentle sine drift has no strong pole, so no flag should be claimed.
+    assert snapshot.flags == []
+
+
 def test_snapshot_exposes_structure_zones_and_conditional_scenarios() -> None:
     candles = {
         interval: structured_candles(minutes)

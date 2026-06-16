@@ -217,6 +217,21 @@ export interface TradeScenario {
   conflicts: string[];
 }
 
+export interface FlagPattern {
+  timeframe: string;
+  direction: "bull" | "bear";
+  status: "forming" | "breakout";
+  pole_start_time: string;
+  pole_start_price: number;
+  pole_end_time: string;
+  pole_end_price: number;
+  flag_start_time: string;
+  flag_end_time: string;
+  flag_upper: number;
+  flag_lower: number;
+  rationale: string;
+}
+
 export interface MarketAnalysisSnapshot {
   symbol: string;
   generated_at: string;
@@ -226,6 +241,7 @@ export interface MarketAnalysisSnapshot {
   structures: TimeframeStructure[];
   zones: AnalysisZone[];
   trend_lines: AnalysisTrendLine[];
+  flags: FlagPattern[];
   scenarios: TradeScenario[];
   methodology_note: string;
 }

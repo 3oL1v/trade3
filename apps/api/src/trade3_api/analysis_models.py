@@ -75,6 +75,21 @@ class AnalysisTrendLine(BaseModel):
     end_price: float = Field(gt=0)
 
 
+class FlagPattern(BaseModel):
+    timeframe: str
+    direction: str  # "bull" | "bear"
+    status: str  # "forming" | "breakout"
+    pole_start_time: datetime
+    pole_start_price: float = Field(gt=0)
+    pole_end_time: datetime
+    pole_end_price: float = Field(gt=0)
+    flag_start_time: datetime
+    flag_end_time: datetime
+    flag_upper: float = Field(gt=0)
+    flag_lower: float = Field(gt=0)
+    rationale: str
+
+
 class ScenarioTarget(BaseModel):
     label: str
     price: float = Field(gt=0)
@@ -102,6 +117,7 @@ class MarketAnalysisSnapshot(BaseModel):
     structures: list[TimeframeStructure]
     zones: list[AnalysisZone]
     trend_lines: list[AnalysisTrendLine]
+    flags: list[FlagPattern] = Field(default_factory=list)
     scenarios: list[TradeScenario]
     methodology_note: str = (
         "Geometry is deterministic; scenario quality is a confluence label, not a win probability."

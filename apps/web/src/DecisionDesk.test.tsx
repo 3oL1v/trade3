@@ -43,6 +43,7 @@ const analysis: MarketAnalysisSnapshot = {
     },
   ],
   trend_lines: [],
+  flags: [],
   scenarios: [
     {
       direction: "long",

@@ -26,6 +26,7 @@ const analysis: MarketAnalysisSnapshot = {
   structures: [],
   zones: [],
   trend_lines: [],
+  flags: [],
   scenarios: [],
   methodology_note: "test",
 };

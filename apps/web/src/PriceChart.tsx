@@ -317,7 +317,51 @@ export function PriceChart({
       zonePrimitiveRef.current = primitive;
     }
 
-    markersRef.current?.setMarkers(structureMarkers(analysis, timeframe, detailed));
+    const flags = analysis?.flags.filter((item) => item.timeframe === timeframe) ?? [];
+    const flagMarkers: SeriesMarker<UTCTimestamp>[] = flags.map((flag) => ({
+      time: toTime(flag.flag_end_time),
+      position: flag.direction === "bull" ? "aboveBar" : "belowBar",
+      color: flag.direction === "bull" ? "#2bc4a4" : "#ef665f",
+      shape: "square",
+      text: `${flag.direction === "bull" ? "BULL" : "BEAR"} FLAG${
+        flag.status === "breakout" ? " >" : ""
+      }`,
+      size: 1,
+    }));
+    markersRef.current?.setMarkers(
+      [...structureMarkers(analysis, timeframe, detailed), ...flagMarkers].sort(
+        (left, right) => Number(left.time) - Number(right.time),
+      ),
+    );
+
+    for (const flag of flags) {
+      const color = flag.direction === "bull" ? "#2bc4a4" : "#ef665f";
+      const pole = chart.addSeries(LineSeries, {
+        color,
+        lineWidth: 2,
+        priceLineVisible: false,
+        lastValueVisible: false,
+      });
+      pole.setData([
+        { time: toTime(flag.pole_start_time), value: flag.pole_start_price },
+        { time: toTime(flag.pole_end_time), value: flag.pole_end_price },
+      ]);
+      overlaySeriesRef.current.push(pole);
+      for (const price of [flag.flag_upper, flag.flag_lower]) {
+        const edge = chart.addSeries(LineSeries, {
+          color,
+          lineWidth: 1,
+          lineStyle: LineStyle.Dashed,
+          priceLineVisible: false,
+          lastValueVisible: false,
+        });
+        edge.setData([
+          { time: toTime(flag.flag_start_time), value: price },
+          { time: toTime(flag.flag_end_time), value: price },
+        ]);
+        overlaySeriesRef.current.push(edge);
+      }
+    }
 
     // Trend lines add diagonal clutter, so they are detail-only.
     const trendLines = detailed
