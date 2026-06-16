@@ -1,5 +1,6 @@
 import asyncio
 import json
+import math
 import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -14,6 +15,7 @@ from .decision_models import (
     ManualDecision,
     ManualDecisionRequest,
     ManualDecisionStats,
+    SymbolBreakdown,
 )
 
 SCHEMA_VERSION = 3
@@ -315,6 +317,8 @@ class ManualDecisionJournal:
         ]
         beat = sum(value > 0 for value in accept_excess)
         return ManualDecisionStats(
+            coin_toss_z=_coin_toss_z(len(accepts_resolved), accept_wins),
+            by_symbol=_symbol_breakdown(accepts_resolved),
             total=total,
             accepted=len(accepts),
             rejected=sum(d.action == DecisionAction.REJECT for d in decisions),
@@ -393,6 +397,40 @@ def _migrate_columns(connection: sqlite3.Connection) -> None:
             connection.execute(
                 f"ALTER TABLE manual_decisions ADD COLUMN {name} {definition}"
             )
+
+
+def _coin_toss_z(n: int, wins: int) -> float | None:
+    """Z-score of the accept win count against a fair-coin 50% baseline.
+
+    |z| above ~2 means the win rate is unlikely to be a coin toss at this sample.
+    """
+
+    if n <= 0:
+        return None
+    return round((wins - n * 0.5) / math.sqrt(n * 0.25), 4)
+
+
+def _symbol_breakdown(accepts_resolved: list[ManualDecision]) -> list[SymbolBreakdown]:
+    by_symbol: dict[str, list[ManualDecision]] = {}
+    for decision in accepts_resolved:
+        by_symbol.setdefault(decision.symbol, []).append(decision)
+    rows: list[SymbolBreakdown] = []
+    for symbol, items in sorted(by_symbol.items()):
+        returns = [d.outcome_return_pct for d in items if d.outcome_return_pct is not None]
+        excess = [d.excess_return_pct for d in items if d.excess_return_pct is not None]
+        wins = sum(value > 0 for value in returns)
+        rows.append(
+            SymbolBreakdown(
+                symbol=symbol,
+                accepts_resolved=len(items),
+                win_rate=round(wins / len(returns), 4) if returns else None,
+                average_return_pct=round(sum(returns) / len(returns), 6) if returns else None,
+                average_excess_return_pct=(
+                    round(sum(excess) / len(excess), 6) if excess else None
+                ),
+            )
+        )
+    return rows
 
 
 def _dump(value: dict[str, Any] | None) -> str | None:

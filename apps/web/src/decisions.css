@@ -232,3 +232,58 @@
 .journal-download:hover {
   background: rgba(255, 255, 255, 0.1);
 }
+
+.decision-breakdown {
+  margin: 6px 12px 0;
+  font-size: 11px;
+}
+
+.decision-breakdown-head,
+.decision-breakdown-row {
+  display: grid;
+  grid-template-columns: 1.4fr 0.5fr 0.7fr 0.9fr 0.9fr;
+  gap: 6px;
+  padding: 3px 0;
+}
+
+.decision-breakdown-head {
+  color: var(--text-muted, #8a93a3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.decision-breakdown-row span:first-child {
+  font-weight: 600;
+}
+
+.decision-filter {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px 4px;
+  flex-wrap: wrap;
+}
+
+.decision-filter button {
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted, #8a93a3);
+  cursor: pointer;
+  transition: background 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+}
+
+.decision-filter button:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--text-strong, #e7ecf3);
+}
+
+.decision-filter button.active {
+  background: rgba(120, 160, 255, 0.15);
+  border-color: rgba(120, 160, 255, 0.5);
+  color: #8fb2ff;
+}

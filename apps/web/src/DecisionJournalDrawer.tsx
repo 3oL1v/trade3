@@ -27,9 +27,10 @@ export function DecisionJournalDrawer({
   const [stats, setStats] = useState<ManualDecisionStats | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [priceInputs, setPriceInputs] = useState<Record<number, string>>({});
+  const [filter, setFilter] = useState<string | undefined>(undefined);
 
   const load = () =>
-    Promise.all([api.decisions(100), api.decisionStats()])
+    Promise.all([api.decisions(100, filter), api.decisionStats()])
       .then(([list, nextStats]) => {
         setDecisions(list.decisions);
         setStats(nextStats);
@@ -51,7 +52,7 @@ export function DecisionJournalDrawer({
       active = false;
       window.clearInterval(timer);
     };
-  }, [open]);
+  }, [open, filter]);
 
   const fillLivePrice = async (id: number, symbol: string) => {
     try {
@@ -118,6 +119,45 @@ export function DecisionJournalDrawer({
           <Stat label="Ср. доходность" value={signedPercent(stats?.average_accept_return_pct)} />
           <Stat label="Бьёт BTC" value={percent(stats?.beat_benchmark_rate)} />
           <Stat label="Ср. alpha vs BTC" value={signedPercent(stats?.average_excess_return_pct)} />
+          <Stat label="Z vs монетка" value={zValue(stats?.coin_toss_z)} />
+        </div>
+        {stats && stats.by_symbol.length > 0 && (
+          <div className="decision-breakdown">
+            <div className="decision-breakdown-head">
+              <span>Символ</span>
+              <span>N</span>
+              <span>Win</span>
+              <span>Ср. дох.</span>
+              <span>Alpha</span>
+            </div>
+            {stats.by_symbol.map((row) => (
+              <div className="decision-breakdown-row" key={row.symbol}>
+                <span>{row.symbol}</span>
+                <span>{row.accepts_resolved}</span>
+                <span>{percent(row.win_rate)}</span>
+                <span className={returnClass(row.average_return_pct ?? 0)}>
+                  {signedPercent(row.average_return_pct)}
+                </span>
+                <span className={returnClass(row.average_excess_return_pct ?? 0)}>
+                  {signedPercent(row.average_excess_return_pct)}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="decision-filter" role="tablist">
+          {([["Все", undefined], ["Принято", "accept"], ["Отклонено", "reject"], ["Отложено", "defer"]] as const).map(
+            ([label, value]) => (
+              <button
+                className={filter === value ? "active" : ""}
+                key={label}
+                onClick={() => setFilter(value)}
+                type="button"
+              >
+                {label}
+              </button>
+            ),
+          )}
         </div>
         <div className="journal-note">
           <span>
@@ -251,4 +291,9 @@ function agreementClass(value: boolean | null) {
 
 function returnClass(value: number) {
   return value > 0 ? "positive" : value < 0 ? "negative" : "";
+}
+
+function zValue(value: number | null | undefined) {
+  if (value == null) return "—";
+  return `${value > 0 ? "+" : ""}${value.toFixed(2)}`;
 }

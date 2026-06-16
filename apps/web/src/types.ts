@@ -469,5 +469,15 @@ export interface ManualDecisionStats {
   benchmark_resolved: number;
   average_excess_return_pct: number | null;
   beat_benchmark_rate: number | null;
+  coin_toss_z: number | null;
+  by_symbol: SymbolBreakdown[];
   note: string;
+}
+
+export interface SymbolBreakdown {
+  symbol: string;
+  accepts_resolved: number;
+  win_rate: number | null;
+  average_return_pct: number | null;
+  average_excess_return_pct: number | null;
 }

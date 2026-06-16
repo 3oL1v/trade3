@@ -188,6 +188,36 @@ async def test_resolve_computes_excess_over_benchmark(tmp_path) -> None:
 
 
 @pytest.mark.asyncio
+async def test_stats_coin_toss_z_and_symbol_breakdown(tmp_path) -> None:
+    journal = ManualDecisionJournal(str(tmp_path / "decisions.sqlite3"))
+    await journal.initialize()
+    now = datetime(2026, 6, 12, 10, 5, tzinfo=UTC)
+
+    # Two BTC accepts (both win), one ETH accept (loss).
+    btc1 = await journal.record(request(decision_price=100.0), now)
+    btc2 = await journal.record(request(decision_price=100.0), now)
+    eth = await journal.record(
+        ManualDecisionRequest(
+            symbol="ETHUSDT", action=DecisionAction.ACCEPT,
+            direction=DecisionDirection.LONG, decision_price=100.0,
+        ),
+        now,
+    )
+    await journal.resolve(btc1.id, DecisionOutcomeRequest(price=110.0), now)
+    await journal.resolve(btc2.id, DecisionOutcomeRequest(price=105.0), now)
+    await journal.resolve(eth.id, DecisionOutcomeRequest(price=90.0), now)
+
+    stats = await journal.stats()
+    assert stats.accepts_resolved == 3
+    # 2 wins of 3 vs fair coin: z = (2 - 1.5) / sqrt(0.75)
+    assert stats.coin_toss_z == pytest.approx((2 - 1.5) / (0.75**0.5), abs=1e-4)
+    symbols = {row.symbol: row for row in stats.by_symbol}
+    assert symbols["BTCUSDT"].accepts_resolved == 2
+    assert symbols["BTCUSDT"].win_rate == 1.0
+    assert symbols["ETHUSDT"].win_rate == 0.0
+
+
+@pytest.mark.asyncio
 async def test_resolve_missing_decision_raises(tmp_path) -> None:
     journal = ManualDecisionJournal(str(tmp_path / "decisions.sqlite3"))
     await journal.initialize()

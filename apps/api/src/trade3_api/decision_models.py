@@ -72,6 +72,14 @@ class ManualDecisionList(BaseModel):
     decisions: list[ManualDecision]
 
 
+class SymbolBreakdown(BaseModel):
+    symbol: str
+    accepts_resolved: int = Field(ge=0)
+    win_rate: float | None
+    average_return_pct: float | None
+    average_excess_return_pct: float | None
+
+
 class ManualDecisionStats(BaseModel):
     total: int = Field(ge=0)
     accepted: int = Field(ge=0)
@@ -90,6 +98,8 @@ class ManualDecisionStats(BaseModel):
     benchmark_resolved: int = Field(ge=0)
     average_excess_return_pct: float | None
     beat_benchmark_rate: float | None
+    coin_toss_z: float | None
+    by_symbol: list[SymbolBreakdown] = Field(default_factory=list)
     note: str = (
         "Manual discretionary decisions, separate from the retired deterministic-strategy "
         "journal. Trade outcomes are not tracked yet."
