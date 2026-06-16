@@ -42,6 +42,20 @@ The terminal stays research-only because of this. No strategy is cleared for liv
 
 ## Architecture
 
+```mermaid
+flowchart TD
+    A[Bybit V5 public API<br/>REST + WebSocket] --> B[Market data ingestion<br/>and quality checks]
+    B --> C[Scanner<br/>top-20 universe]
+    C --> D[Structure and zones<br/>BOS/CHOCH, FVG, order blocks]
+    D --> E[Market flow snapshot<br/>orderbook, trades, liquidations]
+    E --> F[Local Ollama review<br/>schema-bound fact selection]
+    F --> G[Deterministic risk sizing]
+    G --> H[Annotated terminal UI]
+    H --> I[Human decision<br/>accept / reject / defer]
+    I --> J[Decision journal<br/>outcome + BTC benchmark]
+    G -. never places orders .-> H
+```
+
 ```text
 apps/api/    FastAPI backend: Bybit ingestion, scanner, structure analysis,
              flow, Ollama gateway, deterministic risk, backtest/replay tools
