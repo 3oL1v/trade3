@@ -317,7 +317,7 @@ export function PriceChart({
       zonePrimitiveRef.current = primitive;
     }
 
-    const flags = analysis?.flags.filter((item) => item.timeframe === timeframe) ?? [];
+    const flags = (analysis?.flags ?? []).filter((item) => item.timeframe === timeframe);
     const flagMarkers: SeriesMarker<UTCTimestamp>[] = flags.map((flag) => ({
       time: toTime(flag.flag_end_time),
       position: flag.direction === "bull" ? "aboveBar" : "belowBar",
