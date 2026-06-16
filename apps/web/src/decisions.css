@@ -193,3 +193,27 @@
 .decision-resolve-btn:hover {
   background: rgba(56, 199, 122, 0.22);
 }
+
+.journal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.journal-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--text-strong, #e7ecf3);
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.journal-download:hover {
+  background: rgba(255, 255, 255, 0.1);
+}

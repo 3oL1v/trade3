@@ -1,4 +1,4 @@
-import { Check, ClipboardList, X } from "lucide-react";
+import { Check, ClipboardList, Download, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "./api";
 import { moscowTime } from "./format";
@@ -83,9 +83,19 @@ export function DecisionJournalDrawer({
             <ClipboardList size={15} />
             <strong>ЖУРНАЛ РЕШЕНИЙ</strong>
           </div>
-          <button aria-label="Закрыть журнал решений" onClick={onClose} type="button">
-            <X size={16} />
-          </button>
+          <div className="journal-header-actions">
+            <a
+              aria-label="Скачать журнал решений в CSV"
+              className="journal-download"
+              href="/v1/decisions.csv"
+            >
+              <Download size={13} />
+              CSV
+            </a>
+            <button aria-label="Закрыть журнал решений" onClick={onClose} type="button">
+              <X size={16} />
+            </button>
+          </div>
         </div>
         <div className="journal-stats">
           <Stat label="Всего решений" value={stats?.total ?? 0} />

@@ -3,12 +3,13 @@ from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from typing import Annotated, AsyncIterator
 
-from fastapi import FastAPI, HTTPException, Path, Query, Request
+from fastapi import FastAPI, HTTPException, Path, Query, Request, Response
 
 from .ai_models import AiMarketReview
 from .analysis_models import MarketAnalysisSnapshot
 from .bybit import BybitApiError, BybitPublicClient, SUPPORTED_INTERVALS_MINUTES
 from .config import get_settings
+from .decision_export import decisions_to_csv
 from .decision_journal import DecisionNotFoundError, ManualDecisionJournal
 from .decision_models import (
     DecisionOutcomeRequest,
@@ -333,6 +334,20 @@ async def decision_stats(request: Request) -> ManualDecisionStats:
     if journal is None:
         raise HTTPException(status_code=503, detail="manual decision journal is disabled")
     return await journal.stats()
+
+
+@app.get("/v1/decisions.csv")
+async def export_decisions_csv(request: Request) -> Response:
+    journal: ManualDecisionJournal | None = request.app.state.manual_journal
+    if journal is None:
+        raise HTTPException(status_code=503, detail="manual decision journal is disabled")
+    decisions = await journal.list_decisions(limit=500)
+    csv_text = decisions_to_csv(decisions)
+    return Response(
+        content=csv_text,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=trade3_decisions.csv"},
+    )
 
 
 @app.post("/v1/decisions/{decision_id}/outcome", response_model=ManualDecision)
