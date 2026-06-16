@@ -61,9 +61,12 @@ drop the money thesis. Do not re-test the same data to repair the result.
 - Returns are directional move only, before fees, slippage, and funding.
 - The BTC benchmark is automatic, but its window is record-call time to
   resolve-call time. Resolve at the horizon so it lines up with your outcome
-  price. DCA and coin-toss baselines are still computed by hand.
+  price. The coin-toss significance (a z-score of the win rate) is in the stats;
+  the DCA baseline is still computed by hand.
 - An 8-hour horizon is one arbitrary choice. It tests the call, not a managed
   trade with a stop and target.
 
 These limits are fine for a go/no-go signal. They are not fine for sizing real
 risk. Passing this test earns a longer, stricter forward test, not live capital.
+
+For the day-to-day routine, see [data-discipline.md](data-discipline.md).
