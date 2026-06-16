@@ -363,26 +363,6 @@ export function PriceChart({
       }
     }
 
-    // Trend lines are multi-touch support/resistance, at most two per timeframe,
-    // so they stay visible in focus mode as core structure.
-    const trendLines = (analysis?.trend_lines ?? []).filter(
-      (item) => item.timeframe === timeframe,
-    );
-    for (const line of trendLines) {
-      const series = chart.addSeries(LineSeries, {
-        color: line.kind === "rising_support" ? "#2bc4a4" : "#ef665f",
-        lineWidth: detailed ? 2 : 1,
-        lineStyle: LineStyle.Dashed,
-        priceLineVisible: false,
-        lastValueVisible: false,
-      });
-      series.setData([
-        { time: toTime(line.start_time), value: line.start_price },
-        { time: toTime(line.end_time), value: line.end_price },
-      ]);
-      overlaySeriesRef.current.push(series);
-    }
-
     const preferred = analysis?.scenarios.find(
       (scenario) => scenario.direction === analysis.preferred_direction,
     );
