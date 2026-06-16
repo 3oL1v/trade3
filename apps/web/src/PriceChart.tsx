@@ -113,6 +113,8 @@ function structureMarkers(
   timeframe: Timeframe,
   detailed: boolean,
 ): SeriesMarker<UTCTimestamp>[] {
+  // Markers are detail-only; focus mode keeps the chart clean.
+  if (!detailed) return [];
   const structure = analysis?.structures.find((item) => item.timeframe === timeframe);
   if (!structure) return [];
   return [
@@ -317,9 +319,11 @@ export function PriceChart({
 
     markersRef.current?.setMarkers(structureMarkers(analysis, timeframe, detailed));
 
-    const trendLines =
-      analysis?.trend_lines.filter((item) => item.timeframe === timeframe) ?? [];
-    for (const line of detailed ? trendLines : trendLines.slice(-2)) {
+    // Trend lines add diagonal clutter, so they are detail-only.
+    const trendLines = detailed
+      ? (analysis?.trend_lines.filter((item) => item.timeframe === timeframe) ?? [])
+      : [];
+    for (const line of trendLines) {
       const series = chart.addSeries(LineSeries, {
         color: line.kind === "rising_support" ? "#2bc4a4" : "#ef665f",
         lineWidth: detailed ? 2 : 1,
@@ -361,7 +365,8 @@ export function PriceChart({
               style: LineStyle.Dotted,
             },
           ];
-      const targets = detailed ? preferred.targets : preferred.targets.slice(0, 1);
+      // Focus mode shows only ENTRY and SL; targets crowd the price axis.
+      const targets = detailed ? preferred.targets : [];
       const scenarioLines = [
         ...entryLines,
         {
