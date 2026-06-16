@@ -4,7 +4,7 @@ import math
 import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -125,9 +125,14 @@ class ManualDecisionJournal:
         async with self._lock:
             return await asyncio.to_thread(self._list_sync, limit, action)
 
-    async def stats(self) -> ManualDecisionStats:
+    async def stats(
+        self,
+        horizon_hours: float = 8.0,
+        now: datetime | None = None,
+    ) -> ManualDecisionStats:
+        moment = now or datetime.now(UTC)
         async with self._lock:
-            return await asyncio.to_thread(self._stats_sync)
+            return await asyncio.to_thread(self._stats_sync, horizon_hours, moment)
 
     @contextmanager
     def _connect(self) -> Iterator[sqlite3.Connection]:
@@ -298,11 +303,14 @@ class ManualDecisionJournal:
             rows = connection.execute(query, params).fetchall()
         return [_row_to_decision(row) for row in rows]
 
-    def _stats_sync(self) -> ManualDecisionStats:
+    def _stats_sync(self, horizon_hours: float, now: datetime) -> ManualDecisionStats:
         with self._connect() as connection:
             rows = connection.execute("SELECT * FROM manual_decisions").fetchall()
         decisions = [_row_to_decision(row) for row in rows]
         total = len(decisions)
+        horizon = timedelta(hours=horizon_hours)
+        unresolved = [d for d in decisions if d.outcome_at is None]
+        due = sum(1 for d in unresolved if now - d.recorded_at >= horizon)
         accepts = [d for d in decisions if d.action == DecisionAction.ACCEPT]
         comparable = [d for d in decisions if d.agreed_with_ai is not None]
         agreed = sum(d.agreed_with_ai is True for d in comparable)
@@ -319,6 +327,9 @@ class ManualDecisionJournal:
         return ManualDecisionStats(
             coin_toss_z=_coin_toss_z(len(accepts_resolved), accept_wins),
             by_symbol=_symbol_breakdown(accepts_resolved),
+            horizon_hours=horizon_hours,
+            pending_resolution=len(unresolved),
+            due_for_resolution=due,
             total=total,
             accepted=len(accepts),
             rejected=sum(d.action == DecisionAction.REJECT for d in decisions),

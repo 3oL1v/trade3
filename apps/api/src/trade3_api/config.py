@@ -82,6 +82,7 @@ class Settings(BaseSettings):
     manual_journal_enabled: bool = True
     manual_journal_database_path: str = "data/trade3_manual_journal.sqlite3"
     decision_benchmark_symbol: str = "BTCUSDT"
+    decision_horizon_hours: float = Field(default=8, gt=0, le=168)
     ollama_enabled: bool = True
     ollama_base_url: str = "http://127.0.0.1:11434"
     ollama_model: str = "qwen3.5:4b"

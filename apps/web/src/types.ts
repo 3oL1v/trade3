@@ -470,6 +470,9 @@ export interface ManualDecisionStats {
   average_excess_return_pct: number | null;
   beat_benchmark_rate: number | null;
   coin_toss_z: number | null;
+  horizon_hours: number;
+  pending_resolution: number;
+  due_for_resolution: number;
   by_symbol: SymbolBreakdown[];
   note: string;
 }

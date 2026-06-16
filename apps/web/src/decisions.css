@@ -287,3 +287,29 @@
   border-color: rgba(120, 160, 255, 0.5);
   color: #8fb2ff;
 }
+
+.decision-due-banner {
+  margin: 4px 12px 0;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #e3c272;
+  background: rgba(220, 180, 90, 0.12);
+  border: 1px solid rgba(220, 180, 90, 0.35);
+  border-radius: 6px;
+}
+
+.decision-due-tag {
+  display: inline-block;
+  margin-bottom: 3px;
+  padding: 1px 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #e3c272;
+  background: rgba(220, 180, 90, 0.18);
+  border: 1px solid rgba(220, 180, 90, 0.4);
+  border-radius: 4px;
+}

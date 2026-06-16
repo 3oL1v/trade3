@@ -218,6 +218,23 @@ async def test_stats_coin_toss_z_and_symbol_breakdown(tmp_path) -> None:
 
 
 @pytest.mark.asyncio
+async def test_stats_flags_decisions_due_for_resolution(tmp_path) -> None:
+    journal = ManualDecisionJournal(str(tmp_path / "decisions.sqlite3"))
+    await journal.initialize()
+    old = datetime(2026, 6, 12, 0, 0, tzinfo=UTC)
+    recent = datetime(2026, 6, 12, 9, 0, tzinfo=UTC)
+    await journal.record(request(), old)
+    await journal.record(request(), recent)
+    now = datetime(2026, 6, 12, 10, 0, tzinfo=UTC)
+
+    stats = await journal.stats(horizon_hours=8.0, now=now)
+    assert stats.horizon_hours == 8.0
+    assert stats.pending_resolution == 2
+    # Only the 10h-old decision is past the 8h horizon.
+    assert stats.due_for_resolution == 1
+
+
+@pytest.mark.asyncio
 async def test_resolve_missing_decision_raises(tmp_path) -> None:
     journal = ManualDecisionJournal(str(tmp_path / "decisions.sqlite3"))
     await journal.initialize()

@@ -100,6 +100,9 @@ class ManualDecisionStats(BaseModel):
     beat_benchmark_rate: float | None
     coin_toss_z: float | None
     by_symbol: list[SymbolBreakdown] = Field(default_factory=list)
+    horizon_hours: float = 8
+    pending_resolution: int = Field(default=0, ge=0)
+    due_for_resolution: int = Field(default=0, ge=0)
     note: str = (
         "Manual discretionary decisions, separate from the retired deterministic-strategy "
         "journal. Trade outcomes are not tracked yet."

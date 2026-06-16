@@ -166,6 +166,11 @@ export function DecisionJournalDrawer({
             до комиссий и без бенчмарка. Это фундамент под shadow-тест, а не P&L.
           </span>
         </div>
+        {stats && stats.due_for_resolution > 0 && (
+          <div className="decision-due-banner">
+            {stats.due_for_resolution} решени(й) пора закрыть — горизонт {stats.horizon_hours}ч. Подставь цену исхода.
+          </div>
+        )}
         {error && <div className="journal-error">{error}</div>}
         <div className="journal-table">
           <div className="journal-row journal-columns decision-columns">
@@ -213,6 +218,10 @@ export function DecisionJournalDrawer({
                     </small>
                   </>
                 ) : (
+                  <>
+                    {stats && decision.outcome_at == null && isDue(decision.recorded_at, stats.horizon_hours) && (
+                      <span className="decision-due-tag">ПОРА</span>
+                    )}
                   <div className="decision-resolve">
                     <button
                       aria-label={`Подставить текущую цену для решения ${decision.id}`}
@@ -246,6 +255,7 @@ export function DecisionJournalDrawer({
                       <Check size={13} />
                     </button>
                   </div>
+                  </>
                 )}
               </div>
             </div>
@@ -296,4 +306,9 @@ function returnClass(value: number) {
 function zValue(value: number | null | undefined) {
   if (value == null) return "—";
   return `${value > 0 ? "+" : ""}${value.toFixed(2)}`;
+}
+
+function isDue(recordedAt: string, horizonHours: number): boolean {
+  const ageHours = (Date.now() - new Date(recordedAt).getTime()) / 3_600_000;
+  return ageHours >= horizonHours;
 }

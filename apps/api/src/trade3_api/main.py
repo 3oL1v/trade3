@@ -350,7 +350,7 @@ async def decision_stats(request: Request) -> ManualDecisionStats:
     journal: ManualDecisionJournal | None = request.app.state.manual_journal
     if journal is None:
         raise HTTPException(status_code=503, detail="manual decision journal is disabled")
-    return await journal.stats()
+    return await journal.stats(horizon_hours=get_settings().decision_horizon_hours)
 
 
 @app.get("/v1/decisions.csv")
