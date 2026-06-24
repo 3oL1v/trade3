@@ -89,6 +89,12 @@ class Settings(BaseSettings):
     auto_signal_scan_seconds: float = Field(default=1800, ge=300, le=86400)
     auto_signal_horizon_hours: float = Field(default=8, gt=0, le=168)
     auto_signal_startup_delay_seconds: float = Field(default=60, ge=0, le=600)
+    carry_test_enabled: bool = True
+    carry_test_database_path: str = "data/trade3_carry_positions.sqlite3"
+    carry_test_top_n: int = Field(default=5, ge=1, le=25)
+    carry_test_scan_seconds: float = Field(default=28800, ge=3600, le=172800)
+    carry_test_horizon_hours: float = Field(default=48, gt=0, le=336)
+    carry_test_startup_delay_seconds: float = Field(default=90, ge=0, le=600)
     ollama_enabled: bool = True
     ollama_base_url: str = "http://127.0.0.1:11434"
     ollama_model: str = "qwen3.5:4b"

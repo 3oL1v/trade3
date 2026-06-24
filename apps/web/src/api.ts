@@ -3,6 +3,8 @@ import type {
   AutoSignal,
   AutoSignalStats,
   CandleSeries,
+  CarryBoard,
+  CarryTestStats,
   IntradayScan,
   JournalSignal,
   JournalStats,
@@ -72,6 +74,9 @@ export const api = {
   autoSignals: (limit = 100) =>
     request<{ signals: AutoSignal[] }>(`/v1/auto-signals?limit=${limit}`),
   autoSignalStats: () => request<AutoSignalStats>("/v1/auto-signals/stats"),
+  fundingCarry: (limit = 15) =>
+    request<CarryBoard>(`/v1/funding/carry?limit=${limit}`),
+  carryTestStats: () => request<CarryTestStats>("/v1/carry-test/stats"),
   resolveDecision: (id: number, price: number, note?: string | null) =>
     request<ManualDecision>(`/v1/decisions/${id}/outcome`, {
       method: "POST",

@@ -547,3 +547,46 @@ export interface AutoSignalStats {
   scan_seconds: number;
   note: string;
 }
+
+export interface CarryOpportunity {
+  symbol: string;
+  base_coin: string;
+  last_price: number;
+  funding_rate_pct: number;
+  funding_interval_hours: number;
+  annualized_apr_pct: number;
+  side: string;
+  side_label: string;
+  easily_hedgeable: boolean;
+  breakeven_hours: number | null;
+  turnover_24h_usdt: number;
+  open_interest_usdt: number;
+  mean_funding_rate_pct: number | null;
+  positive_fraction: number | null;
+  history_samples: number;
+}
+
+export interface CarryBoard {
+  generated_at: string;
+  source_time: string;
+  taker_fee_rate_pct: number;
+  round_trip_fee_pct: number;
+  eligible_count: number;
+  opportunities: CarryOpportunity[];
+  note: string;
+}
+
+export interface CarryTestStats {
+  total: number;
+  open_positions: number;
+  resolved: number;
+  due_for_resolution: number;
+  win_rate_after_fees: number | null;
+  positive_after_fees: number;
+  mean_realized_funding_pct: number | null;
+  mean_net_carry_pct: number | null;
+  mean_annualized_net_apr_pct: number | null;
+  horizon_hours: number;
+  scan_seconds: number;
+  note: string;
+}

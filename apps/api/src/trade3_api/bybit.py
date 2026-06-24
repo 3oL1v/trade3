@@ -129,6 +129,7 @@ class BybitPublicClient:
                             is_pre_listing=item.get("isPreListing", False),
                             launch_time=_milliseconds_to_datetime(item["launchTime"]),
                             tick_size=float(item["priceFilter"]["tickSize"]),
+                            funding_interval_minutes=int(item.get("fundingInterval") or 480),
                         )
                     )
             cursor = result.get("nextPageCursor", "")
@@ -155,6 +156,28 @@ class BybitPublicClient:
             for item in payload["result"]["list"]
         ]
         return tickers, _milliseconds_to_datetime(payload["time"])
+
+    async def get_funding_history(
+        self, symbol: str, limit: int = 200
+    ) -> list[tuple[datetime, float]]:
+        """Realized funding rate series (newest first from Bybit), oldest-first here."""
+
+        if not 1 <= limit <= 200:
+            raise ValueError("funding history limit must be between 1 and 200")
+        payload = await self._get(
+            "/v5/market/funding/history",
+            {"category": "linear", "symbol": symbol, "limit": limit},
+        )
+        rows = payload["result"]["list"]
+        series = [
+            (
+                _milliseconds_to_datetime(row["fundingRateTimestamp"]),
+                float(row["fundingRate"]),
+            )
+            for row in rows
+        ]
+        series.sort(key=lambda item: item[0])
+        return series
 
     async def get_candles(self, symbol: str, interval: str, limit: int) -> CandleSeries:
         if interval not in SUPPORTED_INTERVALS_MINUTES:

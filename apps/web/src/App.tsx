@@ -5,6 +5,7 @@ import {
   Clock3,
   Database,
   FlaskConical,
+  Percent,
   RefreshCw,
   Wifi,
   WifiOff,
@@ -13,6 +14,7 @@ import { useCallback, useEffect, useState } from "react";
 import { AiReviewPanel } from "./AiReviewPanel";
 import { api } from "./api";
 import { AutoSignalDrawer } from "./AutoSignalDrawer";
+import { CarryDrawer } from "./CarryDrawer";
 import { DecisionActions } from "./DecisionActions";
 import { Analysis, BottomDesk } from "./DecisionDesk";
 import { DecisionJournalDrawer } from "./DecisionJournalDrawer";
@@ -68,6 +70,7 @@ export function App() {
   const [decisionOpen, setDecisionOpen] = useState(false);
   const [autoStats, setAutoStats] = useState<AutoSignalStats | null>(null);
   const [autoOpen, setAutoOpen] = useState(false);
+  const [carryOpen, setCarryOpen] = useState(false);
 
   const refreshDecisionStats = useCallback(() => {
     const pending = api.decisionStats?.();
@@ -220,6 +223,7 @@ export function App() {
         onJournalOpen={() => setJournalOpen(true)}
         onDecisionOpen={() => setDecisionOpen(true)}
         onAutoOpen={() => setAutoOpen(true)}
+        onCarryOpen={() => setCarryOpen(true)}
         onRefresh={refresh}
       />
       <div className="research-warning" role="status">
@@ -303,6 +307,7 @@ export function App() {
       />
       <DecisionJournalDrawer open={decisionOpen} onClose={() => setDecisionOpen(false)} />
       <AutoSignalDrawer open={autoOpen} onClose={() => setAutoOpen(false)} />
+      <CarryDrawer open={carryOpen} onClose={() => setCarryOpen(false)} />
     </main>
   );
 }
@@ -317,6 +322,7 @@ function Header({
   onJournalOpen,
   onDecisionOpen,
   onAutoOpen,
+  onCarryOpen,
   onRefresh,
 }: {
   status: LiveEngineStatus | null;
@@ -328,6 +334,7 @@ function Header({
   onJournalOpen: () => void;
   onDecisionOpen: () => void;
   onAutoOpen: () => void;
+  onCarryOpen: () => void;
   onRefresh: () => Promise<void>;
 }) {
   const age = ageSeconds(status?.last_message_at ?? null);
@@ -355,6 +362,10 @@ function Header({
       <button className="journal-button" onClick={onAutoOpen} type="button">
         <FlaskConical size={13} />
         АВТОТЕСТ <span>{autoCount ?? 0}</span>
+      </button>
+      <button className="journal-button" onClick={onCarryOpen} type="button">
+        <Percent size={13} />
+        CARRY
       </button>
       {journalCount !== null && (
         <button className="journal-button" onClick={onJournalOpen} type="button">

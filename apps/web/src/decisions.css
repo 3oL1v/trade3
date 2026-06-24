@@ -370,3 +370,83 @@
 .dir-tag.neutral {
   color: var(--text-muted, #8a93a3);
 }
+
+/* Carry drawer table columns */
+.journal-row.carry-columns {
+  grid-template-columns: 1.6fr 1.1fr 1fr 1.6fr 1.4fr 0.8fr;
+}
+
+/* Carry regime banner */
+.carry-regime {
+  margin: 6px 12px 0;
+  padding: 7px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  border-radius: 6px;
+  line-height: 1.45;
+}
+
+.carry-regime.pending {
+  color: var(--text-muted, #8a93a3);
+  background: rgba(138, 147, 163, 0.1);
+  border: 1px solid rgba(138, 147, 163, 0.25);
+}
+
+.carry-regime.neutral {
+  color: #e3c272;
+  background: rgba(220, 180, 90, 0.1);
+  border: 1px solid rgba(220, 180, 90, 0.3);
+}
+
+.carry-regime.positive {
+  color: #5bd693;
+  background: rgba(56, 199, 122, 0.1);
+  border: 1px solid rgba(56, 199, 122, 0.35);
+}
+
+.carry-regime.negative {
+  color: #f0697f;
+  background: rgba(240, 90, 110, 0.1);
+  border: 1px solid rgba(240, 90, 110, 0.35);
+}
+
+/* Carry forward-test section */
+.carry-forward {
+  margin: 10px 12px 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(138, 147, 163, 0.22);
+  border-radius: 6px;
+  background: rgba(138, 147, 163, 0.05);
+}
+
+.carry-forward-head {
+  margin-bottom: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  color: var(--text-muted, #8a93a3);
+}
+
+.carry-forward .journal-stats {
+  margin: 0;
+}
+
+.carry-forward .carry-regime {
+  margin: 6px 0 0;
+}
+
+/* Carry hard-hedge label */
+.carry-hard {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 1px 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #e3c272;
+  background: rgba(220, 180, 90, 0.18);
+  border: 1px solid rgba(220, 180, 90, 0.4);
+  border-radius: 4px;
+}

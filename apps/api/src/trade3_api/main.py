@@ -11,8 +11,13 @@ from .auto_signal_collector import AutoSignalCollector
 from .auto_signal_journal import AutoSignalJournal
 from .auto_signal_models import AutoSignalList, AutoSignalStats
 from .bybit import BybitApiError, BybitPublicClient, SUPPORTED_INTERVALS_MINUTES
+from .carry_test_collector import CarryTestCollector
+from .carry_test_journal import CarryTestJournal
+from .carry_test_models import CarryPositionList, CarryTestStats
 from .config import get_settings
 from .decision_export import decisions_to_csv
+from .funding_carry import build_carry_board
+from .funding_carry_models import CarryBoard
 from .decision_journal import DecisionNotFoundError, ManualDecisionJournal
 from .decision_models import (
     DecisionOutcomeRequest,
@@ -98,6 +103,13 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     )
     if app.state.auto_signal_journal:
         await app.state.auto_signal_journal.initialize()
+    app.state.carry_test_journal = (
+        CarryTestJournal(database_path=settings.carry_test_database_path)
+        if settings.carry_test_enabled
+        else None
+    )
+    if app.state.carry_test_journal:
+        await app.state.carry_test_journal.initialize()
     app.state.live_engine = LiveMarketEngine(
         client=client,
         scanner=app.state.market_scanner,
@@ -132,9 +144,30 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     )
     if app.state.auto_signal_collector:
         await app.state.auto_signal_collector.start()
+    app.state.carry_test_collector = (
+        CarryTestCollector(
+            client=client,
+            journal=app.state.carry_test_journal,
+            taker_fee_rate_pct=settings.journal_taker_fee_rate_pct,
+            min_turnover_24h_usdt=settings.market_min_turnover_24h_usdt,
+            min_open_interest_usdt=settings.market_min_open_interest_usdt,
+            max_spread_bps=settings.market_max_spread_bps,
+            allowed_base_coins=settings.market_allowed_base_coin_set(),
+            top_n=settings.carry_test_top_n,
+            scan_seconds=settings.carry_test_scan_seconds,
+            horizon_hours=settings.carry_test_horizon_hours,
+            startup_delay_seconds=settings.carry_test_startup_delay_seconds,
+        )
+        if app.state.carry_test_journal
+        else None
+    )
+    if app.state.carry_test_collector:
+        await app.state.carry_test_collector.start()
     try:
         yield
     finally:
+        if app.state.carry_test_collector:
+            await app.state.carry_test_collector.stop()
         if app.state.auto_signal_collector:
             await app.state.auto_signal_collector.stop()
         await app.state.live_engine.stop()
@@ -242,6 +275,51 @@ async def intraday_candidates(
     limit: Annotated[int, Query(ge=1, le=20)] = 5,
 ) -> IntradayScan:
     return await request.app.state.live_engine.scan(limit)
+
+
+@app.get("/v1/funding/carry", response_model=CarryBoard)
+async def funding_carry(
+    request: Request,
+    limit: Annotated[int, Query(ge=1, le=50)] = 15,
+    history: Annotated[bool, Query()] = True,
+) -> CarryBoard:
+    settings = get_settings()
+    try:
+        return await build_carry_board(
+            request.app.state.bybit_client,
+            limit=limit,
+            taker_fee_rate_pct=settings.journal_taker_fee_rate_pct,
+            min_turnover_24h_usdt=settings.market_min_turnover_24h_usdt,
+            min_open_interest_usdt=settings.market_min_open_interest_usdt,
+            max_spread_bps=settings.market_max_spread_bps,
+            allowed_base_coins=settings.market_allowed_base_coin_set(),
+            with_history=history,
+        )
+    except BybitApiError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
+@app.get("/v1/carry-test/stats", response_model=CarryTestStats)
+async def carry_test_stats(request: Request) -> CarryTestStats:
+    journal: CarryTestJournal | None = request.app.state.carry_test_journal
+    if journal is None:
+        raise HTTPException(status_code=503, detail="carry forward test is disabled")
+    settings = get_settings()
+    return await journal.stats(
+        horizon_hours=settings.carry_test_horizon_hours,
+        scan_seconds=settings.carry_test_scan_seconds,
+    )
+
+
+@app.get("/v1/carry-test/positions", response_model=CarryPositionList)
+async def carry_test_positions(
+    request: Request,
+    limit: Annotated[int, Query(ge=1, le=500)] = 100,
+) -> CarryPositionList:
+    journal: CarryTestJournal | None = request.app.state.carry_test_journal
+    if journal is None:
+        raise HTTPException(status_code=503, detail="carry forward test is disabled")
+    return CarryPositionList(positions=await journal.list_positions(limit))
 
 
 @app.get("/v1/analysis/{symbol}", response_model=MarketAnalysisSnapshot)

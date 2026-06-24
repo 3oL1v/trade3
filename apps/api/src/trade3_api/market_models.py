@@ -13,6 +13,7 @@ class LinearInstrument(BaseModel):
     is_pre_listing: bool
     launch_time: datetime
     tick_size: float = Field(gt=0)
+    funding_interval_minutes: int = Field(default=480, gt=0)
 
 
 class LinearTicker(BaseModel):
