@@ -490,6 +490,11 @@
   color: var(--red);
 }
 
+.ai-review-state strong.rejected {
+  border-color: #63553d;
+  color: var(--amber);
+}
+
 .ai-review-state strong.loading {
   color: var(--amber);
 }

@@ -11,6 +11,7 @@ from pydantic import ValidationError
 from .ai_models import (
     AiConviction,
     AiMarketReview,
+    AiObservedBiases,
     AiReviewPayload,
     AiReviewStatus,
     AiSummaryCode,
@@ -61,41 +62,53 @@ class OllamaMarketAnalyst:
             return cached[1]
 
         started = time.monotonic()
-        try:
-            response = await self._client.post(
-                "/api/generate",
-                json={
-                    "model": self._model,
-                    "prompt": _review_prompt(context),
-                    "stream": False,
-                    "think": False,
-                    "format": AiReviewPayload.model_json_schema(),
-                    "keep_alive": "10m",
-                    "options": {
-                        "temperature": 0.2,
-                        "num_ctx": 8192,
+        # A connection/timeout fault means Ollama is offline, so fail fast. A
+        # rejected answer means Ollama is online but a small model produced a
+        # fact-inconsistent reply, so retry once before giving up.
+        last_error: Exception | None = None
+        for _ in range(2):
+            try:
+                response = await self._client.post(
+                    "/api/generate",
+                    json={
+                        "model": self._model,
+                        "prompt": _review_prompt(context),
+                        "stream": False,
+                        "think": False,
+                        "format": AiReviewPayload.model_json_schema(),
+                        "keep_alive": "10m",
+                        "options": {
+                            "temperature": 0.2,
+                            "num_ctx": 8192,
+                        },
                     },
-                },
-            )
-            response.raise_for_status()
-            content = response.json().get("response", "")
-            if not content:
-                raise ValueError("Ollama returned an empty structured response")
-            payload = AiReviewPayload.model_validate_json(content)
-            _validate_payload(payload, snapshot, context)
-        except (httpx.HTTPError, ValueError, ValidationError) as exc:
-            return _unavailable_review(snapshot, self._model, started, exc)
+                )
+                response.raise_for_status()
+                content = response.json().get("response", "")
+                if not content:
+                    raise ValueError("Ollama returned an empty structured response")
+                payload = AiReviewPayload.model_validate_json(content)
+                _validate_payload(payload, snapshot, context)
+            except httpx.HTTPError as exc:
+                return _unavailable_review(snapshot, self._model, started, exc)
+            except (ValueError, ValidationError) as exc:
+                last_error = exc
+                continue
 
-        review = _render_review(
-            payload=payload,
-            snapshot=snapshot,
-            flow=flow,
-            context=context,
-            model=self._model,
-            started=started,
+            review = _render_review(
+                payload=payload,
+                snapshot=snapshot,
+                flow=flow,
+                context=context,
+                model=self._model,
+                started=started,
+            )
+            self._cache[cache_key] = (time.monotonic(), review)
+            return review
+
+        return _unavailable_review(
+            snapshot, self._model, started, last_error or ValueError("rejected")
         )
-        self._cache[cache_key] = (time.monotonic(), review)
-        return review
 
 
 def _render_review(
@@ -218,16 +231,17 @@ def _validate_payload(
     context: dict[str, Any],
 ) -> None:
     structures = {item.timeframe: item.bias for item in snapshot.structures}
-    observed = payload.observed_biases
     expected = {
         "h4": structures.get("240"),
         "h1": structures.get("60"),
         "m15": structures.get("15"),
         "m5": structures.get("5"),
     }
-    actual = observed.model_dump()
-    if actual != expected:
-        raise ValueError(f"Ollama changed observed timeframe biases: {actual} != {expected}")
+    # The biases only echo the deterministic snapshot, so a small model getting
+    # them slightly wrong should not sink the whole review — coerce them to the
+    # computed values instead of rejecting the answer.
+    if None not in expected.values():
+        payload.observed_biases = AiObservedBiases(**expected)
 
     facts = set(context["available_facts"])
     wait_conditions = set(context["wait_conditions"])
@@ -267,14 +281,21 @@ def _unavailable_review(
     started: float,
     reason: Exception,
 ) -> AiMarketReview:
+    rejected = not isinstance(reason, httpx.HTTPError)
+    status = AiReviewStatus.REJECTED if rejected else AiReviewStatus.UNAVAILABLE
     safe_reason = (
-        "Ollama недоступна или превысила время ожидания."
-        if isinstance(reason, httpx.HTTPError)
-        else "Ответ модели не прошёл проверку фактов и был отклонён."
+        "Ответ модели не прошёл проверку фактов и был отклонён."
+        if rejected
+        else "Ollama недоступна или превысила время ожидания."
+    )
+    headline = (
+        "AI-разбор отклонён проверкой фактов"
+        if rejected
+        else "Локальный AI-разбор временно недоступен"
     )
     return AiMarketReview(
         symbol=snapshot.symbol,
-        status=AiReviewStatus.UNAVAILABLE,
+        status=status,
         model=model,
         generated_at=datetime.now(UTC),
         snapshot_generated_at=snapshot.generated_at,
@@ -292,7 +313,7 @@ def _unavailable_review(
         supporting_fact_ids=[],
         counter_fact_ids=[],
         wait_condition_ids=["retry_ai"],
-        headline="Локальный AI-разбор временно недоступен",
+        headline=headline,
         thesis="Используйте только карту рынка и ручной чек-лист, пока Ollama не вернёт валидный разбор.",
         confirmations=[],
         counterarguments=[safe_reason] if safe_reason else [],

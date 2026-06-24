@@ -38,7 +38,9 @@ export function AiReviewPanel({
               ? "АНАЛИЗ..."
               : review?.status === "ready"
                 ? "OLLAMA READY"
-                : "OLLAMA OFFLINE"}
+                : review?.status === "rejected"
+                  ? "РАЗБОР ОТКЛОНЁН"
+                  : "OLLAMA OFFLINE"}
           </strong>
         </div>
       </header>

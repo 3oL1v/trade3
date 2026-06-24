@@ -22,6 +22,7 @@ class AiConviction(StrEnum):
 class AiReviewStatus(StrEnum):
     READY = "ready"
     UNAVAILABLE = "unavailable"
+    REJECTED = "rejected"
 
 
 class AiSummaryCode(StrEnum):

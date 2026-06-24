@@ -84,11 +84,42 @@ async def test_ollama_review_is_structured_and_cached() -> None:
 
 
 @pytest.mark.asyncio
-async def test_invalid_ollama_response_falls_back_to_wait() -> None:
+async def test_invalid_ollama_response_is_rejected_after_retry() -> None:
+    requests = 0
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal requests
+        requests += 1
+        return httpx.Response(200, json={"response": "not-json"})
+
     client = httpx.AsyncClient(
-        transport=httpx.MockTransport(
-            lambda request: httpx.Response(200, json={"response": "not-json"})
-        ),
+        transport=httpx.MockTransport(handler),
+        base_url="http://127.0.0.1:11434",
+    )
+    analyst = OllamaMarketAnalyst(
+        base_url="http://127.0.0.1:11434",
+        model="test-model",
+        client=client,
+    )
+
+    review = await analyst.review(snapshot())
+
+    # Ollama answered, so this is a rejected review, not an offline one, and the
+    # analyst retried once before giving up.
+    assert review.status == AiReviewStatus.REJECTED
+    assert requests == 2
+    assert review.verdict == AiVerdict.WAIT
+    assert review.advisory_only is True
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_connection_error_is_reported_as_offline() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("connection refused")
+
+    client = httpx.AsyncClient(
+        transport=httpx.MockTransport(handler),
         base_url="http://127.0.0.1:11434",
     )
     analyst = OllamaMarketAnalyst(
@@ -100,8 +131,53 @@ async def test_invalid_ollama_response_falls_back_to_wait() -> None:
     review = await analyst.review(snapshot())
 
     assert review.status == AiReviewStatus.UNAVAILABLE
-    assert review.verdict == AiVerdict.WAIT
-    assert review.advisory_only is True
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_wrong_observed_biases_are_coerced_not_rejected() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={
+                "response": json.dumps(
+                    {
+                        # Deliberately wrong biases — should be coerced, not rejected.
+                        "observed_biases": {
+                            "h4": "bullish",
+                            "h1": "bearish",
+                            "m15": "range",
+                            "m5": "bullish",
+                        },
+                        "verdict": "wait",
+                        "conviction": "low",
+                        "summary_code": "no_edge",
+                        "supporting_fact_ids": [],
+                        "counter_fact_ids": [],
+                        "wait_condition_ids": ["timeframe_alignment"],
+                    },
+                    ensure_ascii=False,
+                )
+            },
+        )
+
+    client = httpx.AsyncClient(
+        transport=httpx.MockTransport(handler),
+        base_url="http://127.0.0.1:11434",
+    )
+    analyst = OllamaMarketAnalyst(
+        base_url="http://127.0.0.1:11434",
+        model="test-model",
+        client=client,
+    )
+
+    snap = snapshot()
+    review = await analyst.review(snap)
+
+    assert review.status == AiReviewStatus.READY
+    expected = {item.timeframe: item.bias for item in snap.structures}
+    assert review.observed_biases.h4 == expected["240"]
+    assert review.observed_biases.m5 == expected["5"]
     await client.aclose()
 
 
