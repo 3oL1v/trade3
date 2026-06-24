@@ -1,0 +1,21 @@
+# Always-on deployment: the API (with the auto-signal forward-test collector)
+# plus a Caddy front that serves the SPA and proxies API calls. Build and run
+# this on the cloud VM with: docker compose up -d --build
+services:
+  api:
+    build: ./apps/api
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      # SQLite journals persist on the host, surviving rebuilds and restarts.
+      - ./data:/app/data
+    expose:
+      - "8000"
+
+  web:
+    build: ./apps/web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "80:80"

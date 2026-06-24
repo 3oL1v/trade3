@@ -1,0 +1,14 @@
+# Serves the built SPA and forwards API calls to the backend container.
+# Listens on :80 (plain HTTP, fine for an IP-only VM). To enable automatic
+# HTTPS, replace ":80" with your domain name and Caddy provisions a certificate.
+:80 {
+	encode gzip
+
+	# Backend routes go to the api service; everything else is the SPA.
+	@backend path /v1/* /health
+	reverse_proxy @backend api:8000
+
+	root * /srv
+	try_files {path} /index.html
+	file_server
+}
