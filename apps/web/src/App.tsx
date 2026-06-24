@@ -4,6 +4,7 @@ import {
   ClipboardList,
   Clock3,
   Database,
+  FlaskConical,
   RefreshCw,
   Wifi,
   WifiOff,
@@ -11,6 +12,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { AiReviewPanel } from "./AiReviewPanel";
 import { api } from "./api";
+import { AutoSignalDrawer } from "./AutoSignalDrawer";
 import { DecisionActions } from "./DecisionActions";
 import { Analysis, BottomDesk } from "./DecisionDesk";
 import { DecisionJournalDrawer } from "./DecisionJournalDrawer";
@@ -19,6 +21,7 @@ import { JournalDrawer } from "./JournalDrawer";
 import { PriceChart } from "./PriceChart";
 import type {
   AiMarketReview,
+  AutoSignalStats,
   Candle,
   JournalStats,
   LiveEngineStatus,
@@ -63,11 +66,19 @@ export function App() {
   const [journalOpen, setJournalOpen] = useState(false);
   const [decisionStats, setDecisionStats] = useState<ManualDecisionStats | null>(null);
   const [decisionOpen, setDecisionOpen] = useState(false);
+  const [autoStats, setAutoStats] = useState<AutoSignalStats | null>(null);
+  const [autoOpen, setAutoOpen] = useState(false);
 
   const refreshDecisionStats = useCallback(() => {
     const pending = api.decisionStats?.();
     if (!pending) return;
     void pending.then(setDecisionStats).catch(() => setDecisionStats(null));
+  }, []);
+
+  const refreshAutoStats = useCallback(() => {
+    const pending = api.autoSignalStats?.();
+    if (!pending) return;
+    void pending.then(setAutoStats).catch(() => setAutoStats(null));
   }, []);
 
   const refresh = useCallback(async () => {
@@ -94,10 +105,11 @@ export function App() {
         setJournalOpen(false);
       }
       refreshDecisionStats();
+      refreshAutoStats();
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "API недоступен");
     }
-  }, [refreshDecisionStats]);
+  }, [refreshDecisionStats, refreshAutoStats]);
 
   useEffect(() => {
     void refresh();
@@ -204,8 +216,10 @@ export function App() {
         now={now}
         journalCount={journalStats?.total_signals ?? null}
         decisionCount={decisionStats?.total ?? null}
+        autoCount={autoStats?.total ?? null}
         onJournalOpen={() => setJournalOpen(true)}
         onDecisionOpen={() => setDecisionOpen(true)}
+        onAutoOpen={() => setAutoOpen(true)}
         onRefresh={refresh}
       />
       <div className="research-warning" role="status">
@@ -288,6 +302,7 @@ export function App() {
         onClose={() => setJournalOpen(false)}
       />
       <DecisionJournalDrawer open={decisionOpen} onClose={() => setDecisionOpen(false)} />
+      <AutoSignalDrawer open={autoOpen} onClose={() => setAutoOpen(false)} />
     </main>
   );
 }
@@ -298,8 +313,10 @@ function Header({
   now,
   journalCount,
   decisionCount,
+  autoCount,
   onJournalOpen,
   onDecisionOpen,
+  onAutoOpen,
   onRefresh,
 }: {
   status: LiveEngineStatus | null;
@@ -307,8 +324,10 @@ function Header({
   now: number;
   journalCount: number | null;
   decisionCount: number | null;
+  autoCount: number | null;
   onJournalOpen: () => void;
   onDecisionOpen: () => void;
+  onAutoOpen: () => void;
   onRefresh: () => Promise<void>;
 }) {
   const age = ageSeconds(status?.last_message_at ?? null);
@@ -332,6 +351,10 @@ function Header({
       <button className="journal-button" onClick={onDecisionOpen} type="button">
         <ClipboardList size={13} />
         РЕШЕНИЯ <span>{decisionCount ?? 0}</span>
+      </button>
+      <button className="journal-button" onClick={onAutoOpen} type="button">
+        <FlaskConical size={13} />
+        АВТОТЕСТ <span>{autoCount ?? 0}</span>
       </button>
       {journalCount !== null && (
         <button className="journal-button" onClick={onJournalOpen} type="button">

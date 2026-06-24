@@ -251,7 +251,7 @@ export type AiConviction = "low" | "medium" | "high";
 
 export interface AiMarketReview {
   symbol: string;
-  status: "ready" | "unavailable";
+  status: "ready" | "unavailable" | "rejected";
   model: string;
   generated_at: string;
   snapshot_generated_at: string;
@@ -499,4 +499,51 @@ export interface SymbolBreakdown {
   win_rate: number | null;
   average_return_pct: number | null;
   average_excess_return_pct: number | null;
+}
+
+export interface AutoSignal {
+  id: number;
+  symbol: string;
+  direction: string;
+  decision_price: number | null;
+  generated_at: string | null;
+  recorded_at: string;
+  outcome_price: number | null;
+  outcome_at: string | null;
+  forward_return_pct: number | null;
+  benchmark_symbol: string | null;
+  benchmark_price: number | null;
+  benchmark_outcome_price: number | null;
+  benchmark_return_pct: number | null;
+  excess_return_pct: number | null;
+}
+
+export interface AutoSymbolBreakdown {
+  symbol: string;
+  resolved: number;
+  win_rate: number | null;
+  average_return_pct: number | null;
+  average_excess_return_pct: number | null;
+}
+
+export interface AutoSignalStats {
+  total: number;
+  longs: number;
+  shorts: number;
+  neutrals: number;
+  directional: number;
+  pending_resolution: number;
+  due_for_resolution: number;
+  resolved: number;
+  directional_resolved: number;
+  win_rate: number | null;
+  average_return_pct: number | null;
+  benchmark_resolved: number;
+  average_excess_return_pct: number | null;
+  beat_benchmark_rate: number | null;
+  coin_toss_z: number | null;
+  by_symbol: AutoSymbolBreakdown[];
+  horizon_hours: number;
+  scan_seconds: number;
+  note: string;
 }

@@ -1,5 +1,7 @@
 import type {
   AiMarketReview,
+  AutoSignal,
+  AutoSignalStats,
   CandleSeries,
   IntradayScan,
   JournalSignal,
@@ -67,6 +69,9 @@ export const api = {
       `/v1/decisions?limit=${limit}${action ? `&action=${action}` : ""}`,
     ),
   decisionStats: () => request<ManualDecisionStats>("/v1/decisions/stats"),
+  autoSignals: (limit = 100) =>
+    request<{ signals: AutoSignal[] }>(`/v1/auto-signals?limit=${limit}`),
+  autoSignalStats: () => request<AutoSignalStats>("/v1/auto-signals/stats"),
   resolveDecision: (id: number, price: number, note?: string | null) =>
     request<ManualDecision>(`/v1/decisions/${id}/outcome`, {
       method: "POST",

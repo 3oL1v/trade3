@@ -7,6 +7,9 @@ from fastapi import FastAPI, HTTPException, Path, Query, Request, Response
 
 from .ai_models import AiMarketReview
 from .analysis_models import MarketAnalysisSnapshot
+from .auto_signal_collector import AutoSignalCollector
+from .auto_signal_journal import AutoSignalJournal
+from .auto_signal_models import AutoSignalList, AutoSignalStats
 from .bybit import BybitApiError, BybitPublicClient, SUPPORTED_INTERVALS_MINUTES
 from .config import get_settings
 from .decision_export import decisions_to_csv
@@ -88,6 +91,13 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     )
     if app.state.manual_journal:
         await app.state.manual_journal.initialize()
+    app.state.auto_signal_journal = (
+        AutoSignalJournal(database_path=settings.auto_signal_database_path)
+        if settings.auto_signal_enabled
+        else None
+    )
+    if app.state.auto_signal_journal:
+        await app.state.auto_signal_journal.initialize()
     app.state.live_engine = LiveMarketEngine(
         client=client,
         scanner=app.state.market_scanner,
@@ -105,9 +115,28 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         enabled=settings.live_market_data_enabled,
     )
     await app.state.live_engine.start()
+    app.state.auto_signal_collector = (
+        AutoSignalCollector(
+            client=client,
+            scanner=app.state.market_scanner,
+            store=app.state.live_store,
+            journal=app.state.auto_signal_journal,
+            benchmark_symbol=settings.decision_benchmark_symbol,
+            universe_size=settings.auto_signal_universe_size,
+            scan_seconds=settings.auto_signal_scan_seconds,
+            horizon_hours=settings.auto_signal_horizon_hours,
+            startup_delay_seconds=settings.auto_signal_startup_delay_seconds,
+        )
+        if app.state.auto_signal_journal
+        else None
+    )
+    if app.state.auto_signal_collector:
+        await app.state.auto_signal_collector.start()
     try:
         yield
     finally:
+        if app.state.auto_signal_collector:
+            await app.state.auto_signal_collector.stop()
         await app.state.live_engine.stop()
         if app.state.ollama_analyst:
             await app.state.ollama_analyst.close()
@@ -385,3 +414,26 @@ async def resolve_decision(
         )
     except DecisionNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.get("/v1/auto-signals/stats", response_model=AutoSignalStats)
+async def auto_signal_stats(request: Request) -> AutoSignalStats:
+    journal: AutoSignalJournal | None = request.app.state.auto_signal_journal
+    if journal is None:
+        raise HTTPException(status_code=503, detail="auto-signal forward test is disabled")
+    settings = get_settings()
+    return await journal.stats(
+        horizon_hours=settings.auto_signal_horizon_hours,
+        scan_seconds=settings.auto_signal_scan_seconds,
+    )
+
+
+@app.get("/v1/auto-signals", response_model=AutoSignalList)
+async def list_auto_signals(
+    request: Request,
+    limit: Annotated[int, Query(ge=1, le=500)] = 100,
+) -> AutoSignalList:
+    journal: AutoSignalJournal | None = request.app.state.auto_signal_journal
+    if journal is None:
+        raise HTTPException(status_code=503, detail="auto-signal forward test is disabled")
+    return AutoSignalList(signals=await journal.list_signals(limit))

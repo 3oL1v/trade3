@@ -313,3 +313,60 @@
   border: 1px solid rgba(220, 180, 90, 0.4);
   border-radius: 4px;
 }
+
+/* Auto signal drawer table */
+.journal-row.auto-columns {
+  grid-template-columns: 1.3fr 1fr 1.1fr 1.6fr;
+}
+
+/* Auto signal verdict banner */
+.auto-verdict {
+  margin: 6px 12px 0;
+  padding: 7px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  border-radius: 6px;
+  line-height: 1.45;
+}
+
+.auto-verdict.pending {
+  color: var(--text-muted, #8a93a3);
+  background: rgba(138, 147, 163, 0.1);
+  border: 1px solid rgba(138, 147, 163, 0.25);
+}
+
+.auto-verdict.neutral {
+  color: #e3c272;
+  background: rgba(220, 180, 90, 0.1);
+  border: 1px solid rgba(220, 180, 90, 0.3);
+}
+
+.auto-verdict.positive {
+  color: #5bd693;
+  background: rgba(56, 199, 122, 0.1);
+  border: 1px solid rgba(56, 199, 122, 0.35);
+}
+
+.auto-verdict.negative {
+  color: #f0697f;
+  background: rgba(240, 90, 110, 0.1);
+  border: 1px solid rgba(240, 90, 110, 0.35);
+}
+
+/* Direction tags for auto signal rows */
+.dir-tag {
+  display: inline-block;
+}
+
+.dir-tag.long {
+  color: #5bd693;
+}
+
+.dir-tag.short {
+  color: #f0697f;
+}
+
+.dir-tag.neutral {
+  color: var(--text-muted, #8a93a3);
+}
